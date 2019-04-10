@@ -1,16 +1,20 @@
 #ifndef FACE_H
 #define FACE_H
 
-class HalfEdge;
+class Edge;
 
 class Face
 {
   public:
-    Face(HalfEdge *edge);
+    Face(Edge *edge);
+
+    void edge(Edge *edge);
+
+    Edge *edge() const;
 
   private:
     int m_id;
-    HalfEdge *m_edge;
+    Edge *m_edge;
 };
 
 #endif
