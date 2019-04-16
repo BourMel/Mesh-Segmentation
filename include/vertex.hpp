@@ -5,7 +5,7 @@
 
 #include "vec3.hpp"
 
-class HalfEdge;
+class Edge;
 
 class Vertex
 {
