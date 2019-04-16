@@ -28,7 +28,7 @@ RELEASE_FLAGS = -o2
 DEBUG_FLAGS = -Wall -Wextra -g
 INCLUDES = -I include/ -I /usr/local/include -I /usr/include/GLFW
 # Space-separated pkg-config libraries used by this project
-LIBS = -lGLEW -lglfw3 -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -lrt -lm -pthread -ldl
+LIBS = 
 
 .PHONY: default_target
 default_target: debug
