@@ -1,5 +1,8 @@
+#include "vec3.hpp"
+
 #include "mesh.hpp"
-#include "halfedge.hpp"
+#include "edge.hpp"
+
 
 #include <iostream>
 #include <string>
@@ -20,11 +23,7 @@ void Mesh::importOFF(std::string filename)
     int numVert, numFaces;
     std::string str;
 
-    Vertex* currentSource = NULL;
-    Face* currentFace = NULL;
-    HalfEdge* currentEdge = NULL;
-    HalfEdge* previousEdge = NULL;
-    HalfEdge* firstEdge = NULL;
+    // vars
 
 
     file.open(filename);
@@ -58,7 +57,8 @@ void Mesh::importOFF(std::string filename)
             std::cout << "wrong format" << std::endl;
         }
         std::cout << x << y << z << std::endl;
-        append_vertex(new Vertex({x, y, z}));
+        //Vec3f v = Vec3f(x,y,z);
+        //append_vertex(new Vertex({x,y,z}));
     }
 
     // read face composition
@@ -79,29 +79,20 @@ void Mesh::importOFF(std::string filename)
             }
             else
             {
-                file >> id;
-                currentSource = m_vertices[id];
-
-                currentEdge = new HalfEdge();
-                currentEdge->face(currentFace);
-                currentEdge->previous_edge(previousEdge);
-                currentEdge->source(currentSource);
-
-                if(i == 0) {
-                firstEdge = currentEdge;
-                }
-
-                // complete the previous infos
-                if(previousEdge != NULL) {
-                    previousEdge->next_edge(currentEdge);
-                }
-                previousEdge = currentEdge;
-
-                // the vertex also knows one of the halfEdge it creates
-                m_vertices[id]->halfEdge(currentEdge);
+                // gen face & edge
             }
         }
     }
+}
+
+void exportOFF(std::string filename)
+{
+
+}
+
+void exportOBJ(std::string filename)
+{
+
 }
 
 void Mesh::append_vertex(Vertex *vertex)

@@ -4,6 +4,7 @@
 #include <vector>
 #include <fstream>
 
+#include "vec3.hpp"
 #include "vertex.hpp"
 #include "face.hpp"
 
@@ -13,8 +14,8 @@ class Mesh
     Mesh();
 
     void importOFF(std::string filename);
-    void exportOFF();
-    void exportOBJ();
+    void exportOFF(std::string filename);
+    void exportOBJ(std::string filename);
 
     const std::vector<Face *> &faces() { return m_faces; }
     const std::vector<Vertex *> &vertices() { return m_vertices; }
