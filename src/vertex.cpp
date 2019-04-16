@@ -6,7 +6,7 @@
 
 float cotangentWeight(Edge *he);
 
-Vertex::Vertex(Vec3f pos, Edge *edge) : m_pos(pos)
+Vertex::Vertex(glm::vec3 pos, Edge *edge) : m_pos(pos)
 {
     static int id = 0;
 
@@ -14,7 +14,7 @@ Vertex::Vertex(Vec3f pos, Edge *edge) : m_pos(pos)
     m_edge = edge;
 }
 
-const Vec3f& Vertex::pos() const
+const glm::vec3& Vertex::pos() const
 {
     return m_pos;
 }
@@ -28,7 +28,7 @@ Edge *Vertex::edge() const
     return m_edge;
 }
 
-void Vertex::pos(Vec3f p)
+void Vertex::pos(glm::vec3 p)
 {
     m_pos = p;
 }

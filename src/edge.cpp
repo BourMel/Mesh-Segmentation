@@ -1,5 +1,10 @@
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include "edge.hpp"
 #include "vertex.hpp"
+
+#include <glm/glm.hpp>
+#include <glm/gtx/norm.hpp>
 
 Edge::Edge(Vertex *first, Vertex* last)
 {
@@ -9,8 +14,7 @@ Edge::Edge(Vertex *first, Vertex* last)
 
 float Edge::cost()
 {
-    Vec3f v = m_last->pos(); 
-    return (v-m_first->pos()).sqLength();
+    return glm::length2(m_last->pos()-m_first->pos());
 }
 
 void Edge::first(Vertex *v)

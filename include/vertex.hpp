@@ -3,31 +3,32 @@
 
 #include <vector>
 
-#include "vec3.hpp"
+//#include "vec3.hpp"
+#include <glm/vec3.hpp>
 
 class Edge;
 
 class Vertex
 {
   public:
-    Vertex(Vec3f pos, Edge *edge = nullptr);
+    Vertex(glm::vec3 pos, Edge *edge = nullptr);
 
     // TODO
     // getAdjFaces()
 
     // getter
-    const Vec3f& pos() const;
+    const glm::vec3& pos() const;
     int id() const;
     Edge * edge() const;
     
     //setter
     void edge(Edge *e);
-    void pos(Vec3f p);
+    void pos(glm::vec3 p);
 
   private:
     std::vector<Vertex *> getNeighbours(); // to public ?
     int m_id;
-    Vec3f m_pos;
+    glm::vec3 m_pos;
     Edge * m_edge;
 };
 
