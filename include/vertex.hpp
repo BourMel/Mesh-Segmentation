@@ -12,6 +12,9 @@ class Vertex
   public:
     Vertex(Vec3f pos, Edge *edge = nullptr);
 
+    // TODO
+    // getAdjFaces()
+
     // getter
     const Vec3f& pos() const;
     int id() const;
@@ -22,7 +25,7 @@ class Vertex
     void pos(Vec3f p);
 
   private:
-    std::vector<Vertex *> getNeighbours();
+    std::vector<Vertex *> getNeighbours(); // to public ?
     int m_id;
     Vec3f m_pos;
     Edge * m_edge;
