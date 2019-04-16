@@ -11,6 +11,7 @@ class Face
     void edge(Edge *edge);
 
     Edge *edge() const;
+    int id() const;
 
   private:
     int m_id;

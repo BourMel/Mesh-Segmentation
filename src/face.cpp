@@ -17,3 +17,8 @@ Edge *Face::edge() const
 {
     return m_edge;   
 }
+
+int Face::id() const
+{
+    return m_id;
+}
