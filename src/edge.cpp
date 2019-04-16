@@ -1,9 +1,16 @@
 #include "edge.hpp"
+#include "vertex.hpp"
 
 Edge::Edge(Vertex *first, Vertex* last)
 {
     m_first = first;
     m_last = last;
+}
+
+float Edge::cost()
+{
+    Vec3f v = m_last->pos(); 
+    return (v-m_first->pos()).sqLength();
 }
 
 void Edge::first(Vertex *v)
@@ -18,32 +25,32 @@ void Edge::last(Vertex *v)
 
 void Edge::faceLeft(Face *f)
 {
-    m_left = f;
+    m_faceL = f;
 }
 
 void Edge::faceRight(Face *f)
 {
-    m_right = f;
+    m_faceR = f;
 }
 
-void Edge::previousEdge1(Edge *e)
+void Edge::previousEdgeLeft(Edge *e)
 {
-    m_prev1 = e;
+    m_prevL = e;
 }
 
-void Edge::previousEdge2(Edge *e)
+void Edge::previousEdgeRight(Edge *e)
 {
-    m_prev2 = e;
+    m_prevR = e;
 }
 
-void Edge::nextEdge1(Edge *e)
+void Edge::nextEdgeLeft(Edge *e)
 {
-    m_next1 = e;
+    m_nextL = e;
 }
 
-void Edge::nextEdge2(Edge *e)
+void Edge::nextEdgeRight(Edge *e)
 {
-    m_next2 = e;
+    m_nextR = e;
 }
 
 Vertex *Edge::first() const 
@@ -58,30 +65,30 @@ Vertex *Edge::last() const
 
 Face *Edge::faceRight() const
 {
-    return m_right;
+    return m_faceR;
 }
 
 Face *Edge::faceLeft() const
 {
-    return m_left;
+    return m_faceL;
 }
 
-Edge *Edge::previousEdge1()  const
+Edge *Edge::previousEdgeLeft()  const
 {
-    return m_prev1;
+    return m_prevL;
 }
 
-Edge *Edge::previousEdge2()  const
+Edge *Edge::previousEdgeRight()  const
 {
-    return m_prev2;
+    return m_prevR;
 }
 
-Edge *Edge::nextEdge1() const
+Edge *Edge::nextEdgeLeft() const
 {
-    return m_next1;
+    return m_nextL;
 }
 
-Edge *Edge::nextEdge2() const
+Edge *Edge::nextEdgeRight() const
 {
-    return m_next2;
+    return m_nextR;
 }
