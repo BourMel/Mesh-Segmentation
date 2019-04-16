@@ -7,7 +7,7 @@ RELEASE_PATH = $(BUILD_PATH)/release
 DEBUG_PATH = $(BUILD_PATH)/debug
 
 # executable # 
-BIN_NAME = SPatches.out
+BIN_NAME = segmenteur.out
 
 # extensions #
 SRC_EXT = cpp
