@@ -1,10 +1,8 @@
 #define GLM_ENABLE_EXPERIMENTAL
 
 #include "edge.hpp"
-#include "face.hpp"
 #include "vertex.hpp"
 
-#include <iostream>
 #include <glm/glm.hpp>
 #include <glm/gtx/norm.hpp>
 
@@ -88,77 +86,6 @@ void Edge::mergeSort(Edge * e, int l, int r)
         merge(e, l, m, r);
     }
 }
-
-std::vector<Face*> Edge::cleanDouble(std::vector<Edge*> l1, std::vector<Edge*> l2) {
-    std::vector<Face*> ATL;
-    Face* shared;
-
-    for(unsigned int i=0; i<l1.size(); i++) {
-        for(unsigned int j=0; j<l2.size(); j++) {
-
-            // if 2 edges have the same vertices
-            if(
-                ((l1[i]->first()->id() == l2[j]->first()->id())
-                && (l1[i]->last()->id() == l2[j]->last()->id()))
-            ||
-                ((l1[i]->first()->id() == l2[j]->last()->id())
-                && (l1[i]->last()->id() == l2[j]->first()->id()))
-            ) {
-
-                // we find the face they shared when they were not flattened
-                // we keep l1's edge
-                // and we define its new construction (linked edges and faces)
-                if(l1[i]->faceLeft()->id() == l2[j]->faceLeft()->id()) {
-                    shared = l1[i]->faceLeft();
-
-                    l1[i]->faceLeft(l2[j]->faceRight());
-                    l1[i]->previousEdgeLeft(l2[j]->previousEdgeRight());
-                    l1[i]->nextEdgeLeft(l2[j]->nextEdgeRight());
-
-                } else if(l1[i]->faceLeft()->id() == l2[j]->faceRight()->id()) {
-                    shared = l1[i]->faceLeft();
-
-                    l1[i]->faceLeft(l2[j]->faceLeft());
-                    l1[i]->previousEdgeLeft(l2[j]->previousEdgeLeft());
-                    l1[i]->nextEdgeLeft(l2[j]->nextEdgeLeft());
-
-                } else if(l1[i]->faceRight()->id() == l2[j]->faceRight()->id()) {
-                    shared = l1[i]->faceRight();
-
-                    l1[i]->faceRight(l1[i]->faceLeft());
-                    l1[i]->previousEdgeRight(l1[i]->previousEdgeLeft());
-                    l1[i]->nextEdgeRight(l1[i]->nextEdgeLeft());
-
-                    l1[i]->faceLeft(l2[j]->faceLeft());
-                    l1[i]->previousEdgeLeft(l2[j]->previousEdgeLeft());
-                    l1[i]->nextEdgeLeft(l2[j]->nextEdgeLeft());
-
-                } else if(l1[i]->faceRight()->id() == l2[j]->faceLeft()->id()) {
-                    shared = l1[i]->faceRight();
-
-                    l1[i]->faceRight(l2[j]->faceRight());
-                    l1[i]->previousEdgeRight(l2[j]->previousEdgeRight());
-                    l1[i]->nextEdgeRight(l2[j]->nextEdgeRight());
-
-                } else {
-                    std::cerr << "Edge::cleanDouble : 2 edges with the same vertices don't share a face" << std::endl;
-                    return ATL;
-                }
-
-                // TODO : delete l2 edge
-                // TODO : delete the last edge in the flattened face
-
-
-                ATL.push_back(shared);
-                // TODO : delete 'shared' face in the mesh
-
-            }
-        }
-    }
-    return ATL;
-}
-
-
 
 void Edge::first(Vertex *v)
 {

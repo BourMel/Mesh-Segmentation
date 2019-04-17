@@ -41,16 +41,6 @@ class Edge
     */
     void mergeSort(Edge * e, int l, int r);
 
-    /*!
-    * \brief Delete edges present in both lists
-    *
-    * \param l1 : list of edges
-    * \param l2 : list of edges
-    * \return List of incident faces that were flattened
-    * \author Méline BL
-    */
-    static std::vector<Face*> cleanDouble(std::vector<Edge*> l1, std::vector<Edge*> l2);
-
     // Associated Triangle List, the list of all faces around first and last
     std::vector<Face*> getATL();
     // WARN: the ATL represent faces to be deleted (get iteraor ?)
