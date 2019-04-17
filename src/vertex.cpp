@@ -15,11 +15,6 @@ Vertex::Vertex(glm::vec3 pos, Edge *edge) : m_pos(pos)
     m_edge = edge;
 }
 
-/*!
- * \brief Search the edges incident to the vertex
- * \return A vector of pointers
- * \author Méline BL
- */
 std::vector<Edge*> Vertex::getIncidentEdges() {
     std::vector<Edge*> list;
     std::vector<Edge*> edgeNeighbours;

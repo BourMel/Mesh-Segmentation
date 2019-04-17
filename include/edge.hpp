@@ -20,7 +20,7 @@ class Edge
     /*!
     * \brief sort and merge two subarrays of Edge
     *
-    * \param e : array of Edge 
+    * \param e : array of Edge
     * \param l : left index of the first subarray
     * \param m : right index of the first subarray, left index of the second subarray
     * \param r : right index of the second subarray
@@ -30,17 +30,26 @@ class Edge
 
     /*!
     * \brief merge sort of an array of Edge
-    * 
+    *
     * must copy e before executing the function or it will be overwriten
     * initialization : l = 0, r = e.size() -1
     *
-    * \param e : array of Edge 
+    * \param e : array of Edge
     * \param l : left index of the first subarray
     * \param r : right index of the second subarray
     * \author Tiphaine R.
     */
     void mergeSort(Edge * e, int l, int r);
 
+    /*!
+    * \brief Delete edges present in both lists
+    *
+    * \param l1 : list of edges
+    * \param l2 : list of edges
+    * \return List of incident faces that were flattened
+    * \author Méline BL
+    */
+    static std::vector<Face*> cleanDouble(std::vector<Edge*> l1, std::vector<Edge*> l2);
 
     // Associated Triangle List, the list of all faces around first and last
     std::vector<Face*> getATL();

@@ -15,6 +15,12 @@ class Vertex
 
     // TODO
     // getAdjFaces()
+
+    /*!
+     * \brief Search the edges incident to the vertex
+     * \return A vector of pointers
+     * \author Méline BL
+     */
     std::vector<Edge*> getIncidentEdges();
 
     // getter
