@@ -15,12 +15,13 @@ class Vertex
 
     // TODO
     // getAdjFaces()
+    std::vector<Edge*> getIncidentEdges();
 
     // getter
     const glm::vec3& pos() const;
     int id() const;
     Edge * edge() const;
-    
+
     //setter
     void edge(Edge *e);
     void pos(glm::vec3 p);
