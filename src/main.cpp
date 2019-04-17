@@ -8,7 +8,7 @@ int main(int argc, char const *argv[])
 
     if(argc == 2)
     {
-        mesh.importOFF(argv[1]);    
+        mesh.importOFF(argv[1]);
     }
     
     std::cout << "program launched" << std::endl;

@@ -87,6 +87,13 @@ void Edge::mergeSort(Edge * e, int l, int r)
     }
 }
 
+Vertex *Edge::getMeanPosition() {
+	return new Vertex( glm::vec3((m_first->pos().x + m_last->pos().x )/2,
+	(m_first->pos().y + m_last->pos().y)/2,
+	(m_first->pos().z + m_last->pos().z)/2),
+	NULL);
+}
+
 void Edge::first(Vertex *v)
 {
     m_first = v;

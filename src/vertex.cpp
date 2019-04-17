@@ -62,6 +62,18 @@ std::vector<Edge*> Vertex::getIncidentEdges() {
     return list;
 }
 
+void Vertex::bindVertexEdges(std::vector<Edge*> toBind, Edge* edgeToDelete) {
+	for(unsigned int i = 0; i < toBind.size(); i++) {
+		if(glm::all(glm::equal(toBind[i]->first()->pos(), edgeToDelete->first()->pos())) ||
+			glm::all(glm::equal(toBind[i]->first()->pos(), edgeToDelete->last()->pos()))) {
+			toBind[i]->first(this);
+		} else if(glm::all(glm::equal(toBind[i]->last()->pos(), edgeToDelete->first()->pos())) ||
+			glm::all(glm::equal(toBind[i]->last()->pos(), edgeToDelete->last()->pos()))) {
+			toBind[i]->last(this);
+		}
+	}
+}
+
 const glm::vec3& Vertex::pos() const
 {
     return m_pos;

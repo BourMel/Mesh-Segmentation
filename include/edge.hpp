@@ -41,6 +41,12 @@ class Edge
     */
     void mergeSort(Edge * e, int l, int r);
 
+    /*!
+	* \brief calculate the position of the middle of the edge and return this vertex
+	* \author Morgane R.
+	*/
+	Vertex *getMeanPosition();
+
     // Associated Triangle List, the list of all faces around first and last
     std::vector<Face*> getATL();
     // WARN: the ATL represent faces to be deleted (get iteraor ?)
