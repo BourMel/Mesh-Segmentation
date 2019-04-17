@@ -5,6 +5,7 @@
 
 //#include "vec3.hpp"
 #include <glm/vec3.hpp>
+#include <glm/vector_relational.hpp>
 
 class Edge;
 
@@ -22,6 +23,14 @@ class Vertex
      * \author Méline BL
      */
     std::vector<Edge*> getIncidentEdges();
+
+	/*!
+	 * \brief Remplace the vertex from edgeToDelete by the current vertex in toBind
+	 * \param toBind : vector of edges that are incident of one vertex from edgeToDelete
+	 * \parma edgeToDelete  
+	 * \author Morgane R.
+	 */
+	void bindVertexEdges(std::vector<Edge*> toBind, Edge* edgeToDelete);
 
     // getter
     const glm::vec3& pos() const;

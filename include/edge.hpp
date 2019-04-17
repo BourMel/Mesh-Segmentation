@@ -41,6 +41,7 @@ class Edge
     */
     void mergeSort(Edge * e, int l, int r);
 
+
     /*!
     * \brief Delete edges present in both lists
     *
@@ -50,6 +51,13 @@ class Edge
     * \author Méline BL
     */
     static std::vector<Face*> cleanDouble(std::vector<Edge*> l1, std::vector<Edge*> l2);
+
+	/*!
+	* \brief calculate the position of the middle of the edge and return this vertex
+	* \author Morgane R.
+	*/
+	Vertex *getMeanPosition();
+
 
     // Associated Triangle List, the list of all faces around first and last
     std::vector<Face*> getATL();
