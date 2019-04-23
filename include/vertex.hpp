@@ -30,14 +30,17 @@ class Vertex
     const glm::vec3& pos() const;
     int id() const;
     std::vector<Edge *> &edges();
+    bool locked();
 
     //setter
     void pos(glm::vec3 p);
+    void lock(bool l);
 
   private:
     std::vector<Edge *> m_edges;
     int m_id;
     glm::vec3 m_pos;
+    bool m_locked;
 };
 
 #endif

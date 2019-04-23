@@ -12,6 +12,7 @@ Vertex::Vertex(glm::vec3 pos) : m_pos(pos)
     static int id = 0;
 
     m_id = id++;
+    m_locked = false;
 }
 
 const glm::vec3& Vertex::pos() const
@@ -24,9 +25,19 @@ int Vertex::id() const
     return m_id;
 }
 
+bool Vertex::locked()
+{
+    return m_locked;
+}
+
 void Vertex::pos(glm::vec3 p)
 {
     m_pos = p;
+}
+
+void Vertex::lock(bool l)
+{
+    m_locked = l;
 }
 
 void Vertex::addEdge(Edge *e)
