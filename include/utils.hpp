@@ -8,6 +8,7 @@
  * @return The concatenation of A and B
  * @param A First vector
  * @param B Second vector
+ * @author Nathan R.
  */
 template <typename T>
 std::vector<T> mergeVector(const std::vector<T> &A, const std::vector<T> &B)
@@ -23,6 +24,7 @@ std::vector<T> mergeVector(const std::vector<T> &A, const std::vector<T> &B)
  * 
  * @tparam T Must be able to use < or > operator
  * @param v The vector to sort
+ * @author Nathan R.
  */
 template <typename T>
 void bubbleSort(std::vector<T> &v)

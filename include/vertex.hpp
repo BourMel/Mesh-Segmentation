@@ -16,13 +16,6 @@ class Vertex
     // TODO
     // getAdjFaces()
 
-    /*!
-     * \brief Search the edges incident to the vertex
-     * \return A vector of pointers
-     * \author Méline BL
-     */
-    std::vector<Edge*> getIncidentEdges();
-
 	/*!
 	 * \brief Remplace the vertex from edgeToDelete by the current vertex in toBind
 	 * \param toBind : vector of edges that are incident of one vertex from edgeToDelete

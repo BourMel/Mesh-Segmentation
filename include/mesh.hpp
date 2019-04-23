@@ -14,6 +14,12 @@ class Mesh
   public:
     Mesh();
 
+    /**
+     * @brief Import OFF file
+     * 
+     * @param filename The path to the file
+     * @author Nathan R.
+     */
     void importOFF(std::string filename);
     //void exportOFF(std::string filename);
 
@@ -51,6 +57,7 @@ class Mesh
      * @param a First vertex
      * @param b Second vertex
      * @return The pointer to the edge if it exists, nullptr otherwise.
+     * @author Nathan R.
      */
     Edge *findEdge(Vertex *a, Vertex *b);
 
