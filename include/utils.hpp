@@ -51,7 +51,7 @@ void bubbleSort(std::vector<T> &v)
 * \param r : right index of the second subarray
 * \author Tiphaine R.
 */
-void merge(Edge *e, int l, int m, int r);
+void merge(std::vector<Edge *> &e, int l, int m, int r);
 
 /**
 * \brief merge sort of an array of Edge
@@ -64,6 +64,6 @@ void merge(Edge *e, int l, int m, int r);
 * \param r : right index of the second subarray
 * \author Tiphaine R.
 */
-void mergeSort(Edge *e, int l, int r);
+void mergeSort(std::vector<Edge *> &e, int l, int r);
 
 #endif

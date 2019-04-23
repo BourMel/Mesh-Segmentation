@@ -1,20 +1,21 @@
 #include "utils.hpp"
 #include <cstdlib>
+#include <vector>
 
 // mergeVector()
 // merge vector is missing because the compiler must be able to see 
 // the implementation of the function in order to generate code 
 // for all specializations.
 
-void merge(Edge* e, int l, int m, int r)
+void merge(std::vector<Edge*> &e, int l, int m, int r)
 {
     int i, j, k;
     int n1 = m - l + 1;
     int n2 =  r - m;
 
     /* Copy data to L[] and R[] */
-    Edge * L = (Edge*)malloc(n1*sizeof(Edge));
-    Edge * R = (Edge*)malloc(n2*sizeof(Edge));
+    std::vector<Edge*> L;
+    std::vector<Edge*> R;
 
     for (i = 0; i < n1; i++)
         L[i] = e[l + i];
@@ -29,7 +30,7 @@ void merge(Edge* e, int l, int m, int r)
     while (i < n1 && j < n2)
     {
         //compare the cost
-        if (L[i].cost() <= R[j].cost())
+        if (L[i]->cost() <= R[j]->cost())
         {
             e[k] = L[i];
             i++;
@@ -55,13 +56,10 @@ void merge(Edge* e, int l, int m, int r)
         j++;
         k++;
     }
-
-    free(L);
-    free(R);
 }
 
 
-void mergeSort(Edge * e, int l, int r)
+void mergeSort(std::vector<Edge*> &e, int l, int r)
 {
     if (l < r)
     {
