@@ -11,6 +11,5 @@ int main(int argc, char const *argv[])
         mesh.importOFF(argv[1]);
     }
     
-    std::cout << "program launched" << std::endl;
     return 0;
 }
