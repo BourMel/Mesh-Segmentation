@@ -2,6 +2,7 @@
 #define UTILS_H
 
 #include <vector>
+#include "edge.hpp"
 
 /**
  * @brief Concatenate two vectors and produce a new one
@@ -40,5 +41,29 @@ void bubbleSort(std::vector<T> &v)
        }
    }
 }
+
+/**
+* \brief sort and merge two subarrays of Edge
+*
+* \param e : array of Edge
+* \param l : left index of the first subarray
+* \param m : right index of the first subarray, left index of the second subarray
+* \param r : right index of the second subarray
+* \author Tiphaine R.
+*/
+void merge(Edge *e, int l, int m, int r);
+
+/**
+* \brief merge sort of an array of Edge
+*
+* must copy e before executing the function or it will be overwriten
+* initialization : l = 0, r = e.size() -1
+*
+* \param e : array of Edge
+* \param l : left index of the first subarray
+* \param r : right index of the second subarray
+* \author Tiphaine R.
+*/
+void mergeSort(Edge *e, int l, int r);
 
 #endif
