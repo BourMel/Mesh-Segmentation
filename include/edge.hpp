@@ -53,6 +53,7 @@ class Edge
 
     EdgeType m_type;
     bool isProtected;
+    float m_cost;
 };
 
 #endif

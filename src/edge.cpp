@@ -6,21 +6,24 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/norm.hpp>
 
-Edge::Edge(Vertex *first, Vertex* last)
+Edge::Edge(Vertex *first, Vertex *last)
 {
     m_v1 = first;
     m_v2 = last;
+    m_cost = glm::length2(m_v2->pos() - m_v1->pos());
 }
 
 float Edge::cost()
 {
-    return glm::length2(m_v2->pos()-m_v1->pos());
+    //return glm::length2(m_v2->pos()-m_v1->pos());
+    return m_cost;
 }
 
-Vertex *Edge::getMeanPosition() {
-	return new Vertex( glm::vec3((m_v1->pos().x + m_v2->pos().x )/2,
-	(m_v1->pos().y + m_v2->pos().y)/2,
-	(m_v1->pos().z + m_v2->pos().z)/2));
+Vertex *Edge::getMeanPosition()
+{
+    return new Vertex(glm::vec3((m_v1->pos().x + m_v2->pos().x) / 2,
+                                (m_v1->pos().y + m_v2->pos().y) / 2,
+                                (m_v1->pos().z + m_v2->pos().z) / 2));
 }
 
 void Edge::addFace(Face *face)
