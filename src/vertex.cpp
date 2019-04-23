@@ -41,15 +41,14 @@ std::vector<Edge *> &Vertex::edges()
 
 float cotangentWeight(Edge *he);
 
-/*void Vertex::bindVertexEdges(std::vector<Edge*> toBind, Edge* edgeToDelete) {
+void Vertex::bindVertexEdges(std::vector<Edge*> toBind, Edge* edgeToDelete) {
 	for(unsigned int i = 0; i < toBind.size(); i++) {
-		if(glm::all(glm::equal(toBind[i]->first()->pos(), edgeToDelete->first()->pos())) ||
-			glm::all(glm::equal(toBind[i]->first()->pos(), edgeToDelete->last()->pos()))) {
-			toBind[i]->first(this);
-		} else if(glm::all(glm::equal(toBind[i]->last()->pos(), edgeToDelete->first()->pos())) ||
-			glm::all(glm::equal(toBind[i]->last()->pos(), edgeToDelete->last()->pos()))) {
-			toBind[i]->last(this);
+		if(glm::all(glm::equal(toBind[i]->v1()->pos(), edgeToDelete->v1()->pos())) ||
+			glm::all(glm::equal(toBind[i]->v1()->pos(), edgeToDelete->v2()->pos()))) {
+			toBind[i]->v1(this);
+		} else if(glm::all(glm::equal(toBind[i]->v2()->pos(), edgeToDelete->v1()->pos())) ||
+			glm::all(glm::equal(toBind[i]->v1()->pos(), edgeToDelete->v2()->pos()))) {
+			toBind[i]->v2(this);
 		}
 	}
 }
-*/
