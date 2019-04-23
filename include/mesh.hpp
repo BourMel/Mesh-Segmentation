@@ -33,6 +33,7 @@ class Mesh
     */
     //static std::vector<Face*> cleanDouble(std::vector<Edge*> l1, std::vector<Edge*> l2);
 
+    void skeletization();
 
     const std::vector<Face *> &faces() { return m_faces; }
     const std::vector<Vertex *> &vertices() { return m_vertices; }
