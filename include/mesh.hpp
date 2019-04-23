@@ -2,9 +2,10 @@
 #define MESH_H
 
 #include <vector>
+#include <map>
+#include <list>
 #include <fstream>
 
-#include "vec3.hpp"
 #include "vertex.hpp"
 #include "face.hpp"
 
@@ -14,8 +15,7 @@ class Mesh
     Mesh();
 
     void importOFF(std::string filename);
-    void exportOFF(std::string filename);
-    void exportOBJ(std::string filename);
+    //void exportOFF(std::string filename);
 
     /*!
     * \brief Delete edges present in both lists (because they link
@@ -26,7 +26,7 @@ class Mesh
     * \return List of incident faces that were flattened
     * \author Méline BL
     */
-    static std::vector<Face*> cleanDouble(std::vector<Edge*> l1, std::vector<Edge*> l2);
+    //static std::vector<Face*> cleanDouble(std::vector<Edge*> l1, std::vector<Edge*> l2);
 
 
     const std::vector<Face *> &faces() { return m_faces; }
@@ -34,10 +34,29 @@ class Mesh
 
   private:
 
-    void append_vertex(Vertex *vertex);
-    void append_face(Face *face);
+    typedef struct EdgeCouple
+    {
+        EdgeCouple(Vertex *a, Vertex *b)
+        {
+            v1 = a;
+            v2 = b;
+        }
+        Vertex *v1;
+        Vertex *v2;
+    } EdgeCouple;
+
+    /**
+     * @brief Tries to find an existing edge in m_edges by vertices.
+     * 
+     * @param a First vertex
+     * @param b Second vertex
+     * @return The pointer to the edge if it exists, nullptr otherwise.
+     */
+    Edge *findEdge(Vertex *a, Vertex *b);
 
     std::vector<Face *> m_faces;
+    std::list<Edge *> m_edges;
+    std::map<std::pair<int, int>, Edge *> m_edge_map;
     std::vector<Vertex *> m_vertices;
 };
 

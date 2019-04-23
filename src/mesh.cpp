@@ -1,9 +1,7 @@
-#include "vec3.hpp"
-
 #include "mesh.hpp"
 #include "edge.hpp"
 #include "face.hpp"
-
+#include "utils.hpp"
 
 #include <iostream>
 #include <string>
@@ -15,87 +13,149 @@ Mesh::Mesh()
 
 void Mesh::importOFF(std::string filename)
 {
-    std::cout << "filename: " << filename << std::endl;
-    std::ifstream file;
-    std::string line;
-    std::stringstream ss;
 
-    int numLine = 0;
-    int numVert, numFaces;
-    std::string str;
+    std::ifstream file;   // input file
+    std::string line;     // current line
+    std::stringstream ss; // stream to read content of line
 
-    // vars
+    int numLine = 0;       // number of the current line
+    int numVert, numFaces; // number of vertices/faces
 
+    float x, y, z;
 
+    // open file
     file.open(filename);
     if (!file.is_open())
     {
         std::cerr << "Unable to open file: " << filename << std::endl;
     }
+    else
+    {
+        std::cout << "filename: " << filename << std::endl;
+    }
 
-    // detect OFF
+    // detect OFF tag
     std::getline(file, line);
+    numLine++;
     ss.str(line);
-    if (!(ss >> str && str == "OFF"))
+    if (!(ss.str() == "OFF"))
     {
         std::cerr << "file token is not OFF" << std::endl;
         return;
     }
 
     std::getline(file, line);
-    file >> numVert >> numFaces;
+    numLine++;
 
-    std::cout << numVert << " " << numFaces << std::endl;
+    // get the number of vertices end faces indicated in the off file
+    ss.str(line);
+    ss >> numVert >> numFaces;
 
-    float x, y, z;
     // read vertices info
-    while (std::getline(file, line))
+    for (int i = 0; i < numVert; i++)
     {
+        std::getline(file, line);
+        numLine++;
+
         std::istringstream iss(line);
 
-        if (!(iss >> x >> y >> z))
+        // tries to read at least 3 consecutive numbers as float
+        if (iss >> x >> y >> z)
         {
-            std::cout << "wrong format" << std::endl;
+            // add the new vertex to the mesh
+            m_vertices.push_back(new Vertex({x, y, z}));
         }
-        std::cout << x << y << z << std::endl;
-        //Vec3f v = Vec3f(x,y,z);
-        //append_vertex(new Vertex({x,y,z}));
+        else
+        {
+            std::cout << "Wrong vertex format (at " << numLine << ")" << std::endl;
+            return;
+        }
     }
 
     // read face composition
-    while (std::getline(file, line))
+    for (int i = 0; i < numFaces; i++)
     {
+        std::getline(file, line);
+        numLine++;
+
         int nbv, id;
         std::istringstream iss(line);
+        std::vector<int> indices;
+
+        // read number of vertices in face
         if (!(iss >> nbv))
         {
-            // erreur
+            std::cerr << "Unable to read vertex count of face! (at " << numLine << ")" << std::endl;
+            return;
         }
-        // read number of vertices in face
+
+        // read indices of vertices connected to the face
+        // expects to read at least nbv indices
         for (int i = 0; i < nbv; i++)
         {
-            if (!(iss >> id))
+            if (iss >> id)
             {
-                std::cerr << "Unable to read vertex coordinate!" << std::endl;
+                indices.push_back(id);
             }
             else
             {
-                // gen face & edge
+                std::cerr << "Unable to read vertex coordinate! (at " << numLine << ")" << std::endl;
+                return;
             }
         }
+
+        Face *f = new Face;
+
+        // sort indices list in ascending order
+        bubbleSort(indices);
+
+        // gen edge couple [0,1] [1,2] [0,2]
+        // we only want edges with v1.id < v2.id
+        std::vector<EdgeCouple> edgeCouples;
+        edgeCouples.push_back(EdgeCouple(m_vertices[indices[0]], m_vertices[indices[1]]));
+        edgeCouples.push_back(EdgeCouple(m_vertices[indices[1]], m_vertices[indices[2]]));
+        edgeCouples.push_back(EdgeCouple(m_vertices[indices[0]], m_vertices[indices[2]]));
+
+        // for every edge couples
+        for (auto ec : edgeCouples)
+        {
+            // try to find if the edge already exists
+            Edge *e = findEdge(ec.v1, ec.v2);
+            if (!e) // if it does't exists, create the edge and insert it in the map
+            {
+                e = new Edge(ec.v1, ec.v2);
+                ec.v1->addEdge(e);
+                ec.v2->addEdge(e);
+
+                m_edge_map.insert({{e->v1()->id(), e->v2()->id()}, e});
+            }
+
+            // add the current face to the edge
+            e->addFace(f);
+            // add the edge to the face
+            f->addEdge(e);
+        }
+        // add the face to the mesh
+        m_faces.push_back(f);
     }
+    // end
+    std::cout << "Found " << m_vertices.size() << " and " << m_faces.size() << " faces." << std::endl;
+    
+    // put all element of map into a vector
+    for(auto it = m_edge_map.begin(); it != m_edge_map.end() ; ++it)
+        m_edges.push_back(it->second);
 }
 
-void exportOFF(std::string filename)
+Edge *Mesh::findEdge(Vertex *a, Vertex *b)
 {
-
+    std::map<std::pair<int, int>, Edge *>::iterator it = m_edge_map.find({a->id(), b->id()});
+    if (it == m_edge_map.end())
+        return nullptr;
+    else
+        return it->second;
 }
 
-void exportOBJ(std::string filename)
-{
-
-}
-
+/*
 std::vector<Face*> Mesh::cleanDouble(std::vector<Edge*> l1, std::vector<Edge*> l2) {
     std::vector<Face*>::iterator sharedInMesh;
     int index;
@@ -191,19 +251,4 @@ std::vector<Face*> Mesh::cleanDouble(std::vector<Edge*> l1, std::vector<Edge*> l
     }
     return ATL;
 }
-
-void Mesh::append_vertex(Vertex *vertex)
-{
-    if (vertex)
-    {
-        m_vertices.push_back(vertex);
-    }
-}
-
-void Mesh::append_face(Face *face)
-{
-    if (face)
-    {
-        m_faces.push_back(face);
-    }
-}
+*/
