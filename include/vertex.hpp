@@ -3,7 +3,6 @@
 
 #include <vector>
 
-//#include "vec3.hpp"
 #include <glm/vec3.hpp>
 #include <glm/vector_relational.hpp>
 
@@ -12,7 +11,7 @@ class Edge;
 class Vertex
 {
   public:
-    Vertex(glm::vec3 pos, Edge *edge = nullptr);
+    Vertex(glm::vec3 pos);
 
     // TODO
     // getAdjFaces()
@@ -32,20 +31,20 @@ class Vertex
 	 */
 	void bindVertexEdges(std::vector<Edge*> toBind, Edge* edgeToDelete);
 
+  void addEdge(Edge *e);
+
     // getter
     const glm::vec3& pos() const;
     int id() const;
-    Edge * edge() const;
+    std::vector<Edge *> &edges();
 
     //setter
-    void edge(Edge *e);
     void pos(glm::vec3 p);
 
   private:
-    std::vector<Vertex *> getNeighbours(); // to public ?
+    std::vector<Edge *> m_edges;
     int m_id;
     glm::vec3 m_pos;
-    Edge * m_edge;
 };
 
 #endif

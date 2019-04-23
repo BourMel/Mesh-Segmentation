@@ -8,13 +8,13 @@
 
 Edge::Edge(Vertex *first, Vertex* last)
 {
-    m_first = first;
-    m_last = last;
+    m_v1 = first;
+    m_v2 = last;
 }
 
 float Edge::cost()
 {
-    return glm::length2(m_last->pos()-m_first->pos());
+    return glm::length2(m_v2->pos()-m_v1->pos());
 }
 
 
@@ -88,88 +88,20 @@ void Edge::mergeSort(Edge * e, int l, int r)
 }
 
 Vertex *Edge::getMeanPosition() {
-	return new Vertex( glm::vec3((m_first->pos().x + m_last->pos().x )/2,
-	(m_first->pos().y + m_last->pos().y)/2,
-	(m_first->pos().z + m_last->pos().z)/2),
-	NULL);
+	return new Vertex( glm::vec3((m_v1->pos().x + m_v2->pos().x )/2,
+	(m_v1->pos().y + m_v2->pos().y)/2,
+	(m_v1->pos().z + m_v2->pos().z)/2));
 }
 
-void Edge::first(Vertex *v)
+void Edge::addFace(Face *face)
 {
-    m_first = v;
+    m_faces.push_back(face);
 }
 
-void Edge::last(Vertex *v)
-{
-    m_last = v;
-}
+//getter
+Vertex *Edge::v1() { return m_v1; }
+Vertex *Edge::v2() { return m_v2; }
 
-void Edge::faceLeft(Face *f)
-{
-    m_faceL = f;
-}
-
-void Edge::faceRight(Face *f)
-{
-    m_faceR = f;
-}
-
-void Edge::previousEdgeLeft(Edge *e)
-{
-    m_prevL = e;
-}
-
-void Edge::previousEdgeRight(Edge *e)
-{
-    m_prevR = e;
-}
-
-void Edge::nextEdgeLeft(Edge *e)
-{
-    m_nextL = e;
-}
-
-void Edge::nextEdgeRight(Edge *e)
-{
-    m_nextR = e;
-}
-
-Vertex *Edge::first() const
-{
-    return m_first;
-}
-
-Vertex *Edge::last() const
-{
-    return m_last;
-}
-
-Face *Edge::faceRight() const
-{
-    return m_faceR;
-}
-
-Face *Edge::faceLeft() const
-{
-    return m_faceL;
-}
-
-Edge *Edge::previousEdgeLeft()  const
-{
-    return m_prevL;
-}
-
-Edge *Edge::previousEdgeRight()  const
-{
-    return m_prevR;
-}
-
-Edge *Edge::nextEdgeLeft() const
-{
-    return m_nextL;
-}
-
-Edge *Edge::nextEdgeRight() const
-{
-    return m_nextR;
-}
+// setter
+void Edge::v1(Vertex *v1) { m_v1 = v1; }
+void Edge::v2(Vertex *v2) { m_v2 = v2; }

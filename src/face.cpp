@@ -1,21 +1,21 @@
 #include "face.hpp"
+#include "edge.hpp"
 
-Face::Face(Edge *edge)
+Face::Face()
 {
     static int id = 0;
     
     m_id = id++;
-    m_edge = edge;
 }
 
-void Face::edge(Edge *edge)
+void Face::addEdge(Edge *e)
 {
-    m_edge = edge;
+    m_edges.push_back(e);
 }
 
-Edge *Face::edge() const
+std::vector<Edge*> &Face::edges()
 {
-    return m_edge;   
+    return m_edges;
 }
 
 int Face::id() const
