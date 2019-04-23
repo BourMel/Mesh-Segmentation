@@ -33,6 +33,14 @@ class Edge
 	*/
     Vertex *getMeanPosition();
 
+    /**
+     * @brief Get the Connected Edges object
+     * 
+     * @return std::vector<Edge*>
+     * @author Nathan R.
+     */
+    std::vector<Edge*> getConnectedEdges();
+
     // Associated Triangle List, the list of all faces around first and last
     std::vector<Face *> getATL();
     // WARN: the ATL represent faces to be deleted (get iteraor ?)
@@ -42,10 +50,12 @@ class Edge
     //getter
     Vertex *v1();
     Vertex *v2();
+    std::vector<Face *> &faces();
 
     // setter
     void v1(Vertex *v1);
     void v2(Vertex *v2);
+    void type(EdgeType type);
 
   private:
     Vertex *m_v1, *m_v2;

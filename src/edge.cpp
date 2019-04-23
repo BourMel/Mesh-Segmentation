@@ -26,6 +26,20 @@ Vertex *Edge::getMeanPosition()
                                 (m_v1->pos().z + m_v2->pos().z) / 2));
 }
 
+std::vector<Edge*> Edge::getConnectedEdges()
+{
+    std::vector<Edge*> edges;
+    for(auto e : m_v1->edges())
+        if(e != this)
+            edges.push_back(e);
+
+    for(auto e : m_v2->edges())
+        if(e != this)
+            edges.push_back(e);
+    
+    return edges;
+}
+
 void Edge::addFace(Face *face)
 {
     m_faces.push_back(face);
@@ -34,7 +48,9 @@ void Edge::addFace(Face *face)
 //getter
 Vertex *Edge::v1() { return m_v1; }
 Vertex *Edge::v2() { return m_v2; }
+std::vector<Face*> &Edge::faces() { return m_faces; }
 
 // setter
 void Edge::v1(Vertex *v1) { m_v1 = v1; }
 void Edge::v2(Vertex *v2) { m_v2 = v2; }
+void Edge::type(EdgeType type) { m_type = type; }
