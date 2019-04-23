@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <map>
-#include <list>
 #include <fstream>
 
 #include "vertex.hpp"
@@ -62,7 +61,7 @@ class Mesh
     Edge *findEdge(Vertex *a, Vertex *b);
 
     std::vector<Face *> m_faces;
-    std::list<Edge *> m_edges;
+    std::vector<Edge *> m_edges;
     std::map<std::pair<int, int>, Edge *> m_edge_map;
     std::vector<Vertex *> m_vertices;
 };
