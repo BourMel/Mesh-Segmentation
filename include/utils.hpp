@@ -17,4 +17,26 @@ std::vector<T> mergeVector(const std::vector<T> &A, const std::vector<T> &B)
 
     return C;
 }
+
+/**
+ * @brief Apply bubble sort (ascending) to the vector \c v
+ * 
+ * @tparam T Must be able to use < or > operator
+ * @param v The vector to sort
+ */
+template <typename T>
+void bubbleSort(std::vector<T> &v)
+{ 
+   for(int i = v.size()-1; i>=1 ; i--)
+   {
+       for(int j = 0; j < i; j++)
+       {
+           if(v[j+1] < v[j])
+           {
+               std::swap(v[j+1], v[j]);
+           }
+       }
+   }
+}
+
 #endif
