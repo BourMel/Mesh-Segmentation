@@ -140,7 +140,7 @@ void Mesh::importOFF(std::string filename)
     }
     // end
     std::cout << "Found " << m_vertices.size() << " and " << m_faces.size() << " faces." << std::endl;
-    
+
     // put all element of map into a vector
     for(auto it = m_edge_map.begin(); it != m_edge_map.end() ; ++it)
         m_edges.push_back(it->second);
@@ -155,100 +155,82 @@ Edge *Mesh::findEdge(Vertex *a, Vertex *b)
         return it->second;
 }
 
-/*
 std::vector<Face*> Mesh::cleanDouble(std::vector<Edge*> l1, std::vector<Edge*> l2) {
-    std::vector<Face*>::iterator sharedInMesh;
-    int index;
     std::vector<Face*> ATL;
     Face* shared;
+    bool foundSharedFace = false;
+
+    int faceIndex;
+    std::vector<Face*>::iterator faceInList;
 
     for(unsigned int i=0; i<l1.size(); i++) {
         for(unsigned int j=0; j<l2.size(); j++) {
 
             // if 2 edges have the same vertices
             if(
-                ((l1[i]->first()->id() == l2[j]->first()->id())
-                && (l1[i]->last()->id() == l2[j]->last()->id()))
+                ((l1[i]->v1() == l2[j]->v1())
+                && (l1[i]->v2() == l2[j]->v2()))
             ||
-                ((l1[i]->first()->id() == l2[j]->last()->id())
-                && (l1[i]->last()->id() == l2[j]->first()->id()))
+                ((l1[i]->v1() == l2[j]->v2())
+                && (l1[i]->v2() == l2[j]->v1()))
             ) {
 
-                if(l1[i]->faceLeft()->id() == l2[j]->faceLeft()->id()) {
-                    // we find the face they shared when they were not flattened
-                    shared = l1[i]->faceLeft();
+                // we find the face they shared when they were not flattened
+                for(unsigned int k=0; k<l1[i]->faces().size() && !foundSharedFace; k++) {
+                    for(unsigned int l=0; l<l2[j]->faces().size() && !foundSharedFace; l++) {
+                        if(l1[i]->faces()[k] == l2[j]->faces()[l]) {
+                            shared = l1[i]->faces()[k];
 
-                    // we delete the last edge of the shared (and flattened) face (not l1, not l2)
-                    if(l1[i]->nextEdgeLeft()->id() == l2[j]->id()) {
-                        delete l1[i]->previousEdgeLeft();
-                    } else {
-                        delete l1[i]->nextEdgeLeft();
+                            // remove the flattened face from l1 and l2 lists
+                            faceInList = std::find(l1[i]->faces().begin(), l1[i]->faces().end(), shared);
+                            faceIndex = std::distance(l1[i]->faces().begin(), faceInList);
+                            l1[i]->faces().erase(l1[i]->faces().begin() + faceIndex);
+
+                            faceInList = std::find(l2[j]->faces().begin(), l2[j]->faces().end(), shared);
+                            faceIndex = std::distance(l2[j]->faces().begin(), faceInList);
+                            l2[j]->faces().erase(l2[j]->faces().begin() + faceIndex);
+
+                            // quit the 2 loops
+                            foundSharedFace = true;
+                        }
                     }
-
-                    // and we define l1's new construction (linked edges and faces)
-                    l1[i]->faceLeft(l2[j]->faceRight());
-                    l1[i]->previousEdgeLeft(l2[j]->previousEdgeRight());
-                    l1[i]->nextEdgeLeft(l2[j]->nextEdgeRight());
-
-                } else if(l1[i]->faceLeft()->id() == l2[j]->faceRight()->id()) {
-                    shared = l1[i]->faceLeft();
-
-                    if(l1[i]->nextEdgeLeft()->id() == l2[j]->id()) {
-                        delete l1[i]->previousEdgeLeft();
-                    } else {
-                        delete l1[i]->nextEdgeLeft();
-                    }
-
-                    l1[i]->faceLeft(l2[j]->faceLeft());
-                    l1[i]->previousEdgeLeft(l2[j]->previousEdgeLeft());
-                    l1[i]->nextEdgeLeft(l2[j]->nextEdgeLeft());
-
-                } else if(l1[i]->faceRight()->id() == l2[j]->faceRight()->id()) {
-                    shared = l1[i]->faceRight();
-
-                    if(l1[i]->nextEdgeRight()->id() == l2[j]->id()) {
-                        delete l1[i]->previousEdgeRight();
-                    } else {
-                        delete l1[i]->nextEdgeRight();
-                    }
-
-                    l1[i]->faceRight(l1[i]->faceLeft());
-                    l1[i]->previousEdgeRight(l1[i]->previousEdgeLeft());
-                    l1[i]->nextEdgeRight(l1[i]->nextEdgeLeft());
-
-                    l1[i]->faceLeft(l2[j]->faceLeft());
-                    l1[i]->previousEdgeLeft(l2[j]->previousEdgeLeft());
-                    l1[i]->nextEdgeLeft(l2[j]->nextEdgeLeft());
-
-                } else if(l1[i]->faceRight()->id() == l2[j]->faceLeft()->id()) {
-                    shared = l1[i]->faceRight();
-
-                    if(l1[i]->nextEdgeRight()->id() == l2[j]->id()) {
-                        delete l1[i]->previousEdgeRight();
-                    } else {
-                        delete l1[i]->nextEdgeRight();
-                    }
-
-                    l1[i]->faceRight(l2[j]->faceRight());
-                    l1[i]->previousEdgeRight(l2[j]->previousEdgeRight());
-                    l1[i]->nextEdgeRight(l2[j]->nextEdgeRight());
-
-                } else {
-                    std::cerr << "Edge::cleanDouble : 2 edges with the same vertices don't share a face" << std::endl;
-                    return ATL;
                 }
+
+                // we delete the last edge of the shared (and flattened) face (not l1, not l2)
+                for(unsigned int k=0; k<shared->edges().size(); k++) {
+                    if((shared->edges()[k] != l1[i] && (shared->edges()[k] != l2[j]))) {
+                        deleteEdge(shared->edges()[k]);
+                        delete shared->edges()[k];
+                        break;
+                    }
+                }
+
+                // and define l1's new construction (linked faces)
+                l1[i]->faces().insert(l1[i]->faces().end(), l2[j]->faces().begin(), l2[j]->faces().end());
 
                 delete l2[j];
                 ATL.push_back(shared);
-
-                // delete the shared face in the mesh
-                sharedInMesh = std::find(m_faces.begin(), m_faces.end(), shared);
-                index = std::distance(m_faces.begin(), sharedInMesh);
-                m_faces.erase(m_faces.begin() + index);
-                delete shared;
+                deleteFace(shared);
             }
         }
     }
     return ATL;
 }
-*/
+
+void Mesh::deleteEdge(Edge* edge) {
+    int index;
+    std::vector<Edge*>::iterator edgeInMesh;
+
+    edgeInMesh = std::find(m_edges.begin(), m_edges.end(), edge);
+    index = std::distance(m_edges.begin(), edgeInMesh);
+    m_edges.erase(m_edges.begin() + index);
+}
+
+void Mesh::deleteFace(Face* face) {
+    int index;
+    std::vector<Face*>::iterator faceInMesh;
+
+    faceInMesh = std::find(m_faces.begin(), m_faces.end(), face);
+    index = std::distance(m_faces.begin(), faceInMesh);
+    m_faces.erase(m_faces.begin() + index);
+}
