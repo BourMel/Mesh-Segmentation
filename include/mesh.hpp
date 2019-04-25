@@ -23,6 +23,14 @@ class Mesh
     void importOFF(std::string filename);
     //void exportOFF(std::string filename);
 
+    /**
+     * @brief Export Obj file
+     *
+     * @param filename The path to the file
+     * @author Tiphaine R.
+     */
+    void exportOBJ(std::string filename);
+
     /*!
     * \brief Delete edges present in both lists (because they link
     * the 2 same vertices) and delete the flattened faces

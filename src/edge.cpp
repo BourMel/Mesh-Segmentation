@@ -49,6 +49,7 @@ void Edge::addFace(Face *face)
 Vertex *Edge::v1() { return m_v1; }
 Vertex *Edge::v2() { return m_v2; }
 std::vector<Face*> &Edge::faces() { return m_faces; }
+Edge::EdgeType Edge::type() { return m_type;}
 
 // setter
 void Edge::v1(Vertex *v1) { m_v1 = v1; }

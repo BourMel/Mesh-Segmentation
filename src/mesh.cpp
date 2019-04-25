@@ -146,6 +146,51 @@ void Mesh::importOFF(std::string filename)
         m_edges.push_back(it->second);
 }
 
+void Mesh::exportOBJ(std::string filename)
+{
+    std::ofstream file;   // output file
+    glm::vec3 v1 = glm::vec3();
+    glm::vec3 v2 = glm::vec3();
+    int k = 1;
+
+    //open file
+    file.open(filename);
+    if (!file.is_open())
+    {
+        std::cerr << "Unable to open file: " << filename << std::endl;
+        return;
+    }
+
+    for(unsigned int i=0; i<m_edges.size(); i++)
+    {
+        // get vertices
+        v1 = m_edges[i]->v1()->pos();
+        v2 = m_edges[i]->v2()->pos();
+
+        file << "v " << v1.x << " " << v1.y << " " << v1.z;
+        file << "v " << v2.x << " " << v2.y << " " << v2.z;
+
+        // virtual edges
+        if(m_edges[i]->type() == Edge::VIRTUAL)
+        {
+            file << "g virtual";
+            file << "usemtl blue";
+        }
+        // bones
+        else if(m_edges[i]->type() == Edge::BONE)
+        {
+            file << "g bone";
+            file << "usemtl red";
+        }
+
+        // line between the vertices
+        file << "l " << k << " " << k+1;
+        k+=2;
+    }
+
+    file.close();
+}
+
 Edge *Mesh::findEdge(Vertex *a, Vertex *b)
 {
     std::map<std::pair<int, int>, Edge *>::iterator it = m_edge_map.find({a->id(), b->id()});
