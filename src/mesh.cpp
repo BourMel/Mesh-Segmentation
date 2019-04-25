@@ -11,6 +11,28 @@ Mesh::Mesh()
 {
 }
 
+void Mesh::skeletonization()
+{
+    mergeSort(m_edges, 0, m_edges.size()/2);
+    for(std::size_t i = 0; i < m_edges.size(); i++)
+    {
+        Edge *e = m_edges[i];
+        if(e->faces().size() > 0) // if an edge is connect to at least one face
+        {
+            Vertex *mean = e->getMeanPosition();
+            std::vector<Edge*> connected = e->getConnectedEdges();
+            //mean->bindVertexEdges(connected, e);
+            //mean->cleanDoubles();
+        }
+        else // if an edge is not connected to any face, lock it
+        {
+            e->type(Edge::BONE);
+            e->v1()->lock(true);
+            e->v2()->lock(true);
+        }
+    }
+}
+
 void Mesh::importOFF(std::string filename)
 {
 
