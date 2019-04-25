@@ -51,6 +51,7 @@ class Edge
     Vertex *v1();
     Vertex *v2();
     std::vector<Face *> &faces();
+    EdgeType type();
 
     // setter
     void v1(Vertex *v1);
