@@ -2,6 +2,7 @@
 #include "edge.hpp"
 #include "face.hpp"
 #include "utils.hpp"
+#include <glm/gtx/string_cast.hpp>
 
 #include <iostream>
 #include <string>
@@ -13,16 +14,15 @@ Mesh::Mesh()
 
 void Mesh::skeletonization()
 {
-    mergeSort(m_edges, 0, m_edges.size()/2);
+    std::cout << "sorting..." << std::endl;
+    //mergeSort(m_edges, 0, m_edges.size()/2);
+    std::cout << "decimating..." << std::endl;
     for(std::size_t i = 0; i < m_edges.size(); i++)
     {
         Edge *e = m_edges[i];
         if(e->faces().size() > 0) // if an edge is connect to at least one face
         {
-            Vertex *mean = e->getMeanPosition();
-            std::vector<Edge*> connected = e->getConnectedEdges();
-            //mean->bindVertexEdges(connected, e);
-            //mean->cleanDoubles();
+            dissolveEdge(e);
         }
         else // if an edge is not connected to any face, lock it
         {
@@ -33,37 +33,67 @@ void Mesh::skeletonization()
     }
 }
 
+// edge: the edge to collapse
 void Mesh::dissolveEdge(Edge *edge)
 {
-    Vertex *mean = edge->getMeanPosition();
-    auto edges = mergeVector(edge->v1()->edges(),edge->v2()->edges());
+    Vertex *mean = edge->getMeanPosition(); // the mean position on the edge
+    m_vertices.push_back(mean);
+    std::cout << glm::to_string(mean->pos()) << std::endl;
+
+    auto edges = edge->getConnectedEdges(); //   all the edges connected
+    std::cout << edges.size() << " edges connected." << std::endl;
+
     for(Edge* e : edges)
     {
-        if(e->v1() == edge->v1() && e->v1()->locked() == false)
+        if(e->isLocked() == false)
         {
-            e->v1(mean);
-            e->v1()->edges().erase(std::find(e->v1()->edges().begin(),e->v1()->edges().end(),e));
-            mean->addEdge(e);
+            if(e->v1() == edge->v1() || e->v1() == edge->v2()) // e.v1 is connected to edge
+            {
+                e->v1()->edges().erase(find(e->v1()->edges(),e));
+                e->v1(mean);
+                mean->addEdge(e);
+            }
+            else if(e->v2() == edge->v1() || e->v2() == edge->v2()) // e.v2
+            {
+                e->v2()->edges().erase(find(e->v2()->edges(),e));
+                e->v2(mean);
+                mean->addEdge(e);
+            }
+            else
+            {
+                // erreur
+            }
+
         }
-        else if(e->v2() == edge->v1() && e->v2()->locked() == false)
+        else // edge is locked so is bone
         {
-            e->v2(mean);
-            e->v1()->edges().erase(std::find(e->v1()->edges().begin(),e->v1()->edges().end(),e));
-            mean->addEdge(e);
-        }
-        else if(e->v1() == edge->v2() && e->v1()->locked() == false)
+            // virtual edge ?
+        } 
+    }
+    // PASS
+    // all free edges are now connected to mean
+    // go through all edges of mean to detect duplicates and update ATL
+    for(Edge *e1 : mean->edges())
+    {
+        for(auto e2 = mean->edges().begin(); e2 != mean->edges().end(); e2++)
         {
-            e->v1(mean);
-            e->v1()->edges().erase(std::find(e->v1()->edges().begin(),e->v1()->edges().end(),e));
-            mean->addEdge(e);
-        }
-        else if(e->v2() == edge->v2() && e->v2()->locked() == false)
-        {
-            e->v2(mean);
-            e->v1()->edges().erase(std::find(e->v1()->edges().begin(),e->v1()->edges().end(),e));
-            mean->addEdge(e);
+            // if two edges have same vertices and are not the same edge
+            if(((e1->v1() == (*e2)->v1() && e1->v2() == (*e2)->v2()) || (e1->v1() == (*e2)->v2() && e1->v2() == (*e2)->v1())) && (e1 !=(*e2)))
+            {
+                std::cout << "found similar:" << e1->v1()->id() << " " << e1->v2()->id() << " | " << (*e2)->v1()->id() << " " << (*e2)->v2()->id() << std::endl;
+                Face *f = faceInCommon(e1, *e2);
+                if(f != nullptr)
+                {
+                    e1->faces().erase(find(e1->faces(),f));
+                    e1->addFaceATL(f);
+                    std::cout << "have a face in common" << std::endl;
+                }
+                m_edges.erase(find(m_edges,*e2));
+                mean->edges().erase(e2);
+            }
         }
     }
+    m_edges.erase(find(m_edges,edge));
 }
 
 void Mesh::importOFF(std::string filename)
@@ -194,7 +224,7 @@ void Mesh::importOFF(std::string filename)
         m_faces.push_back(f);
     }
     // end
-    std::cout << "Found " << m_vertices.size() << " and " << m_faces.size() << " faces." << std::endl;
+    std::cout << "Found " << m_vertices.size() << "vertices  and " << m_faces.size() << " faces." << std::endl;
 
     // put all element of map into a vector
     for(auto it = m_edge_map.begin(); it != m_edge_map.end() ; ++it)
