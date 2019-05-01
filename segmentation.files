@@ -1,0 +1,11 @@
+include/edge.hpp
+include/face.hpp
+include/mesh.hpp
+include/utils.hpp
+include/vertex.hpp
+src/edge.cpp
+src/face.cpp
+src/main.cpp
+src/mesh.cpp
+src/utils.cpp
+src/vertex.cpp
