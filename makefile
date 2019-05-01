@@ -26,7 +26,7 @@ DEPS = $(OBJECTS:.o=.d)
 COMPILE_FLAGS = -std=c++11
 RELEASE_FLAGS = -o2
 DEBUG_FLAGS = -Wall -Wextra -g
-INCLUDES = -I include/ -I /usr/local/include -I /usr/include/GLFW
+INCLUDES = -I include/ -I /usr/local/include -I /usr/include/GLFW -I/usr/include
 # Space-separated pkg-config libraries used by this project
 LIBS = 
 
