@@ -60,6 +60,7 @@ class Mesh
     void dissolveEdge(Edge* edge);
 
     const std::vector<Face *> &faces() { return m_faces; }
+    const std::vector<Edge *> &edges() { return m_edges; }
     const std::vector<Vertex *> &vertices() { return m_vertices; }
 
   private:
