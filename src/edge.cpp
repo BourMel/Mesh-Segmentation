@@ -4,6 +4,7 @@
 #include "vertex.hpp"
 #include "utils.hpp"
 
+#include <ostream>
 #include <algorithm>
 #include <glm/glm.hpp>
 #include <glm/gtx/norm.hpp>
@@ -74,3 +75,8 @@ void Edge::v1(Vertex *v1) { m_v1 = v1; }
 void Edge::v2(Vertex *v2) { m_v2 = v2; }
 void Edge::type(EdgeType type) { m_type = type; }
 void Edge::isLocked(bool b) { m_isLocked = b; }
+
+std::ostream &operator<<(std::ostream &o, const Edge &e)
+{
+    return o << "[" << e.v1()->id() << "," << e.v2()->id() << "]";
+}

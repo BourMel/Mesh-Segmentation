@@ -1,6 +1,8 @@
 #include "face.hpp"
 #include "edge.hpp"
 
+#include <sstream>
+
 Face::Face()
 {
     static int id = 0;
@@ -21,4 +23,15 @@ std::vector<Edge*> &Face::edges()
 int Face::id() const
 {
     return m_id;
+}
+
+std::ostream &operator<<(std::ostream &o, Face &f)
+{
+    std::stringstream ss;
+    ss << f.id();
+    for(auto e : f.edges())
+    {
+        ss << *e;
+    }
+    return o << ss.str();
 }

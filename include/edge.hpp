@@ -2,6 +2,7 @@
 #define EDGE_H
 
 #include <vector>
+#include <ostream>
 
 class Face;
 class Vertex;
@@ -57,6 +58,9 @@ class Edge
     void v2(Vertex *v2);
     void type(EdgeType type);
     void isLocked(bool b);
+
+    // debug
+    friend std::ostream &operator<<(std::ostream &o, const Edge &v);
 
   private:
 

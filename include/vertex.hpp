@@ -2,7 +2,7 @@
 #define VERTEX_H
 
 #include <vector>
-
+#include <ostream>
 #include <glm/vec3.hpp>
 #include <glm/vector_relational.hpp>
 
@@ -37,6 +37,9 @@ class Vertex
     //setter
     void pos(glm::vec3 p);
     void lock(bool l);
+
+    // debug
+    friend std::ostream &operator<<(std::ostream &o, const Vertex &v);
 
   private:
     std::vector<Edge *> m_edges;

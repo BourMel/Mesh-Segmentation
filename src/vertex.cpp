@@ -1,5 +1,6 @@
 #include "vertex.hpp"
 
+#include <glm/gtx/string_cast.hpp>
 #include <cmath>
 #include <algorithm>
 
@@ -84,4 +85,9 @@ void Vertex::bindEdges(std::vector<Edge*> toBind, Edge* toDelete)
         else if(e->v2() == toDelete->v2())
             e->v2(this);
     }
+}
+
+std::ostream &operator<<(std::ostream &o, const Vertex &v)
+{
+    return o << v.id() << ": " << glm::to_string(v.pos()) ;
 }
