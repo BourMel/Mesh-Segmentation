@@ -2,6 +2,7 @@
 #define UTILS_H
 
 #include <vector>
+#include <algorithm>
 #include "edge.hpp"
 
 /**
@@ -65,5 +66,18 @@ void merge(std::vector<Edge *> &e, int l, int m, int r);
 * \author Tiphaine R.
 */
 void mergeSort(std::vector<Edge *> &e, int l, int r);
+
+/**
+ * \brief Return the face common to both edges
+ * \author Nathan R.
+ * \return The pointer to the face connected to both e1 and e2. \c nullptr otherwise.
+ */
+Face *faceInCommon(Edge *e1, Edge *e2);
+
+template<typename T>
+typename std::vector<T>::const_iterator find(std::vector<T> const &v, T e)
+{
+    return std::find(v.begin(), v.end(), e);
+}
 
 #endif

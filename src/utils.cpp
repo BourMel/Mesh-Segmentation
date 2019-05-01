@@ -72,3 +72,18 @@ void mergeSort(std::vector<Edge*> &e, int l, int r)
         merge(e, l, m, r);
     }
 }
+
+Face *faceInCommon(Edge *e1, Edge *e2)
+{
+    for(Face *f1: e1->faces())
+    {
+        for(Face *f2: e2->faces())
+        {
+            if(f1 == f2)
+            {
+                return f1;
+            }
+        }
+    }
+    return nullptr;
+}
