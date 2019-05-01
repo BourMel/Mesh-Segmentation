@@ -13,6 +13,7 @@ Edge::Edge(Vertex *first, Vertex *last)
     m_v1 = first;
     m_v2 = last;
     m_cost = glm::length2(m_v2->pos() - m_v1->pos());
+    m_isLocked = false;
 }
 
 Vertex *Edge::getMeanPosition()
@@ -26,11 +27,19 @@ std::vector<Edge*> Edge::getConnectedEdges()
 {
     std::vector<Edge*> edges;
 
-    edges = mergeVector(m_v1->edges(), m_v2->edges());
-    auto it = std::find(edges.begin(), edges.end(), this);
-    if(it != edges.end())
+    for(auto e: m_v1->edges())
     {
-        edges.erase(it);
+        if(e != this)
+        {
+            edges.push_back(e);
+        }
+    }
+    for(auto e: m_v2->edges())
+    {
+        if(e != this)
+        {
+            edges.push_back(e);
+        }
     }
     
     return edges;
@@ -52,14 +61,16 @@ void Edge::computeCost()
 }
 
 //getter
-Vertex *Edge::v1() { return m_v1; }
-Vertex *Edge::v2() { return m_v2; }
+Vertex *Edge::v1() const { return m_v1; }
+Vertex *Edge::v2() const { return m_v2; }
 std::vector<Face*> &Edge::faces() { return m_faces; }
 std::vector<Face*> &Edge::ATL() { return m_ATL; }
-Edge::EdgeType Edge::type() { return m_type; }
-float Edge::cost() { return m_cost; }
+Edge::EdgeType Edge::type() const { return m_type; }
+float Edge::cost() const { return m_cost; }
+bool Edge::isLocked() const {return m_isLocked;}
 
 // setter
 void Edge::v1(Vertex *v1) { m_v1 = v1; }
 void Edge::v2(Vertex *v2) { m_v2 = v2; }
 void Edge::type(EdgeType type) { m_type = type; }
+void Edge::isLocked(bool b) { m_isLocked = b; }

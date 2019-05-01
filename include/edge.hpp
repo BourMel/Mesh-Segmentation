@@ -25,7 +25,7 @@ class Edge
      * 
      * @return The edge's square length
      */
-    float cost();
+    float cost() const;
 
     /*!
 	* \brief calculate the position of the middle of the edge and return this vertex
@@ -45,16 +45,18 @@ class Edge
     void addFaceATL(Face *face);
 
     //getter
-    Vertex *v1();
-    Vertex *v2();
+    Vertex *v1() const;
+    Vertex *v2() const;
     std::vector<Face *> &faces();
     std::vector<Face *> &ATL();
-    EdgeType type();
+    EdgeType type() const;
+    bool isLocked() const;
 
     // setter
     void v1(Vertex *v1);
     void v2(Vertex *v2);
     void type(EdgeType type);
+    void isLocked(bool b);
 
   private:
 
@@ -65,7 +67,7 @@ class Edge
     std::vector<Face *> m_ATL;
 
     EdgeType m_type;
-    bool isProtected;
+    bool m_isLocked;
     float m_cost;
 };
 
