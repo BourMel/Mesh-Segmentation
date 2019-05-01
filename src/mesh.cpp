@@ -33,6 +33,39 @@ void Mesh::skeletonization()
     }
 }
 
+void Mesh::dissolveEdge(Edge *edge)
+{
+    Vertex *mean = edge->getMeanPosition();
+    auto edges = mergeVector(edge->v1()->edges(),edge->v2()->edges());
+    for(Edge* e : edges)
+    {
+        if(e->v1() == edge->v1() && e->v1()->locked() == false)
+        {
+            e->v1(mean);
+            e->v1()->edges().erase(std::find(e->v1()->edges().begin(),e->v1()->edges().end(),e));
+            mean->addEdge(e);
+        }
+        else if(e->v2() == edge->v1() && e->v2()->locked() == false)
+        {
+            e->v2(mean);
+            e->v1()->edges().erase(std::find(e->v1()->edges().begin(),e->v1()->edges().end(),e));
+            mean->addEdge(e);
+        }
+        else if(e->v1() == edge->v2() && e->v1()->locked() == false)
+        {
+            e->v1(mean);
+            e->v1()->edges().erase(std::find(e->v1()->edges().begin(),e->v1()->edges().end(),e));
+            mean->addEdge(e);
+        }
+        else if(e->v2() == edge->v2() && e->v2()->locked() == false)
+        {
+            e->v2(mean);
+            e->v1()->edges().erase(std::find(e->v1()->edges().begin(),e->v1()->edges().end(),e));
+            mean->addEdge(e);
+        }
+    }
+}
+
 void Mesh::importOFF(std::string filename)
 {
 

@@ -57,6 +57,8 @@ class Mesh
 
     void skeletonization();
 
+    void dissolveEdge(Edge* edge);
+
     const std::vector<Face *> &faces() { return m_faces; }
     const std::vector<Vertex *> &vertices() { return m_vertices; }
 

@@ -63,3 +63,18 @@ void Vertex::bindVertexEdges(std::vector<Edge*> toBind, Edge* edgeToDelete) {
 		}
 	}
 }
+
+void Vertex::bindEdges(std::vector<Edge*> toBind, Edge* toDelete)
+{
+    for(Edge *e : toBind)
+    {
+        if(e->v1() == toDelete->v1())
+            e->v1(this);
+        else if(e->v1() == toDelete->v2())
+            e->v1(this);
+        else if(e->v2() == toDelete->v1())
+            e->v2(this);
+        else if(e->v2() == toDelete->v2())
+            e->v2(this);
+    }
+}

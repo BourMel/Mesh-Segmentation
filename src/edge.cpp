@@ -2,7 +2,9 @@
 
 #include "edge.hpp"
 #include "vertex.hpp"
+#include "utils.hpp"
 
+#include <algorithm>
 #include <glm/glm.hpp>
 #include <glm/gtx/norm.hpp>
 
@@ -11,12 +13,6 @@ Edge::Edge(Vertex *first, Vertex *last)
     m_v1 = first;
     m_v2 = last;
     m_cost = glm::length2(m_v2->pos() - m_v1->pos());
-}
-
-float Edge::cost()
-{
-    //return glm::length2(m_v2->pos()-m_v1->pos());
-    return m_cost;
 }
 
 Vertex *Edge::getMeanPosition()
@@ -29,13 +25,13 @@ Vertex *Edge::getMeanPosition()
 std::vector<Edge*> Edge::getConnectedEdges()
 {
     std::vector<Edge*> edges;
-    for(auto e : m_v1->edges())
-        if(e != this)
-            edges.push_back(e);
 
-    for(auto e : m_v2->edges())
-        if(e != this)
-            edges.push_back(e);
+    edges = mergeVector(m_v1->edges(), m_v2->edges());
+    auto it = std::find(edges.begin(), edges.end(), this);
+    if(it != edges.end())
+    {
+        edges.erase(it);
+    }
     
     return edges;
 }
@@ -45,11 +41,23 @@ void Edge::addFace(Face *face)
     m_faces.push_back(face);
 }
 
+void Edge::addFaceATL(Face *face)
+{
+    m_ATL.push_back(face);
+}
+
+void Edge::computeCost()
+{
+    m_cost = glm::length2(m_v2->pos()-m_v1->pos());
+}
+
 //getter
 Vertex *Edge::v1() { return m_v1; }
 Vertex *Edge::v2() { return m_v2; }
 std::vector<Face*> &Edge::faces() { return m_faces; }
-Edge::EdgeType Edge::type() { return m_type;}
+std::vector<Face*> &Edge::ATL() { return m_ATL; }
+Edge::EdgeType Edge::type() { return m_type; }
+float Edge::cost() { return m_cost; }
 
 // setter
 void Edge::v1(Vertex *v1) { m_v1 = v1; }

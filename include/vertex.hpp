@@ -24,6 +24,8 @@ class Vertex
 	 */
 	void bindVertexEdges(std::vector<Edge*> toBind, Edge* edgeToDelete);
 
+  void bindEdges(std::vector<Edge*> toBind, Edge* toDelete);
+
   void addEdge(Edge *e);
 
     // getter

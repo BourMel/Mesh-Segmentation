@@ -41,16 +41,14 @@ class Edge
      */
     std::vector<Edge*> getConnectedEdges();
 
-    // Associated Triangle List, the list of all faces around first and last
-    std::vector<Face *> getATL();
-    // WARN: the ATL represent faces to be deleted (get iteraor ?)
-
     void addFace(Face *face);
+    void addFaceATL(Face *face);
 
     //getter
     Vertex *v1();
     Vertex *v2();
     std::vector<Face *> &faces();
+    std::vector<Face *> &ATL();
     EdgeType type();
 
     // setter
@@ -59,8 +57,12 @@ class Edge
     void type(EdgeType type);
 
   private:
+
+    void computeCost();
+
     Vertex *m_v1, *m_v2;
     std::vector<Face *> m_faces;
+    std::vector<Face *> m_ATL;
 
     EdgeType m_type;
     bool isProtected;
