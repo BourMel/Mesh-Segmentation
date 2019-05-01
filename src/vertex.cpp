@@ -38,6 +38,13 @@ void Vertex::pos(glm::vec3 p)
 void Vertex::lock(bool l)
 {
     m_locked = l;
+    for(auto e : m_edges)
+    {
+        if(e->v1()->locked() && e->v2()->locked())
+        {
+            e->isLocked(true);
+        }
+    }
 }
 
 void Vertex::addEdge(Edge *e)
