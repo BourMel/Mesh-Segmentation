@@ -54,11 +54,11 @@ float cotangentWeight(Edge *he);
 
 void Vertex::bindVertexEdges(std::vector<Edge*> toBind, Edge* edgeToDelete) {
 	for(unsigned int i = 0; i < toBind.size(); i++) {
-		if(glm::all(glm::equal(toBind[i]->v1()->pos(), edgeToDelete->v1()->pos())) ||
-			glm::all(glm::equal(toBind[i]->v1()->pos(), edgeToDelete->v2()->pos()))) {
+		if((toBind[i]->v1() == edgeToDelete->v1()) ||
+			(toBind[i]->v1() == edgeToDelete->v2())) {
 			toBind[i]->v1(this);
-		} else if(glm::all(glm::equal(toBind[i]->v2()->pos(), edgeToDelete->v1()->pos())) ||
-			glm::all(glm::equal(toBind[i]->v1()->pos(), edgeToDelete->v2()->pos()))) {
+		} else if((toBind[i]->v2() == edgeToDelete->v1()) ||
+			(toBind[i]->v1() == edgeToDelete->v2())) {
 			toBind[i]->v2(this);
 		}
 	}
