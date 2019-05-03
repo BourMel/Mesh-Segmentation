@@ -3,8 +3,9 @@
 #include <glm/gtx/string_cast.hpp>
 #include <cmath>
 #include <algorithm>
-
+#include <sstream>
 #include "edge.hpp"
+#include "utils.hpp"
 
 float cotangentWeight(Edge *he);
 
@@ -53,6 +54,11 @@ void Vertex::addEdge(Edge *e)
     m_edges.push_back(e);
 }
 
+void Vertex::removeEdge(Edge *e)
+{
+    m_edges.erase(find(m_edges,e));
+}
+
 std::vector<Edge *> &Vertex::edges()
 {
     return m_edges;
@@ -87,7 +93,15 @@ void Vertex::bindEdges(std::vector<Edge*> toBind, Edge* toDelete)
     }
 }
 
-std::ostream &operator<<(std::ostream &o, const Vertex &v)
+std::ostream &operator<<(std::ostream &o, Vertex &v)
 {
-    return o << v.id() << ": " << glm::to_string(v.pos()) ;
+    std::stringstream ss;
+    ss << v.id() << ": " << glm::to_string(v.pos());
+    ss << "{ ";
+    for(auto e: v.edges())
+    {
+        ss << *e << " ";
+    }
+    ss << "}";
+    return o << ss.str() ;
 }

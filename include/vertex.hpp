@@ -27,6 +27,7 @@ class Vertex
   void bindEdges(std::vector<Edge*> toBind, Edge* toDelete);
 
   void addEdge(Edge *e);
+  void removeEdge(Edge *e);
 
     // getter
     const glm::vec3& pos() const;
@@ -39,7 +40,7 @@ class Vertex
     void lock(bool l);
 
     // debug
-    friend std::ostream &operator<<(std::ostream &o, const Vertex &v);
+    friend std::ostream &operator<<(std::ostream &o, Vertex &v);
 
   private:
     std::vector<Edge *> m_edges;
