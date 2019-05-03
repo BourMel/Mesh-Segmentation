@@ -17,6 +17,7 @@ class Edge
         VIRTUAL
     } EdgeType;
 
+    Edge();
     Edge(Vertex *first, Vertex *last);
 
     /**
@@ -70,7 +71,7 @@ class Edge
     }
 
   private:
-
+    void init();
     void computeCost();
 
     Vertex *m_v1, *m_v2;
