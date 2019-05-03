@@ -11,10 +11,14 @@
 
 Edge::Edge(Vertex *first, Vertex *last)
 {
+    static int i = 0;
+    m_id = i;
     m_v1 = first;
     m_v2 = last;
     m_cost = glm::length2(m_v2->pos() - m_v1->pos());
     m_isLocked = false;
+
+    i++;
 }
 
 Vertex *Edge::getMeanPosition()
@@ -51,6 +55,11 @@ void Edge::addFace(Face *face)
     m_faces.push_back(face);
 }
 
+void Edge::removeFace(Face *face)
+{
+    m_faces.erase(find(m_faces, face));
+}
+
 void Edge::addFaceATL(Face *face)
 {
     m_ATL.push_back(face);
@@ -62,6 +71,7 @@ void Edge::computeCost()
 }
 
 //getter
+int Edge::id() const {return m_id;}
 Vertex *Edge::v1() const { return m_v1; }
 Vertex *Edge::v2() const { return m_v2; }
 std::vector<Face*> &Edge::faces() { return m_faces; }
@@ -76,7 +86,7 @@ void Edge::v2(Vertex *v2) { m_v2 = v2; }
 void Edge::type(EdgeType type) { m_type = type; }
 void Edge::isLocked(bool b) { m_isLocked = b; }
 
-std::ostream &operator<<(std::ostream &o, const Edge &e)
+std::ostream &operator<<(std::ostream &o, Edge &e)
 {
-    return o << "[" << e.v1()->id() << "," << e.v2()->id() << "]";
+    return o << e.id() << ":[" << e.v1()->id() << "," << e.v2()->id() << "]("<<e.faces().size()<<")";
 }

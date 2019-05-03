@@ -43,9 +43,11 @@ class Edge
     std::vector<Edge*> getConnectedEdges();
 
     void addFace(Face *face);
+    void removeFace(Face *face);
     void addFaceATL(Face *face);
 
     //getter
+    int id() const;
     Vertex *v1() const;
     Vertex *v2() const;
     std::vector<Face *> &faces();
@@ -60,7 +62,12 @@ class Edge
     void isLocked(bool b);
 
     // debug
-    friend std::ostream &operator<<(std::ostream &o, const Edge &v);
+    friend std::ostream &operator<<(std::ostream &o, Edge &e);
+
+    static bool compEdgePtr(Edge *a, Edge *b) {return a->m_cost < b->m_cost;}
+    bool operator< (const Edge &other) const {
+        return m_cost < other.m_cost;
+    }
 
   private:
 
@@ -73,6 +80,7 @@ class Edge
     EdgeType m_type;
     bool m_isLocked;
     float m_cost;
+    int m_id;
 };
 
 #endif
