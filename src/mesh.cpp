@@ -7,47 +7,51 @@
 #include <string>
 #include <sstream>
 #include <algorithm>
+#include <glm/gtx/string_cast.hpp>
+
 Mesh::Mesh()
 {
 }
 
 void Mesh::skeletonization()
 {
-    bool isMesh = true;
-    while(isMesh)
+    bool stop = false;
+    while(!stop)
     {
-        bool isBone = true;
         std::size_t i = 0;
 
+        std::cout << "sorting..." << std::endl;
         std::sort(m_edges.begin(), m_edges.end(), Edge::compEdgePtr);
 
-        while(isBone && i < m_edges.size())
+        while(i < m_edges.size())
         {
             Edge *e = m_edges[i];
             if(e->type() == Edge::MESH)
             {
                 if(e->faces().size() > 0) // if an edge is connect to at least one face
                 {
-                    debug();
                     dissolveEdge(e);
                     m_edges.erase(find(m_edges, e));
-                    isBone = false;              
+                    break;              
                 }
                 else // if an edge is not connected to any face, lock it
                 {
-                    //std::cout << "to bone" << std::endl;
+                    //std::cout << *e <<"to bone" << std::endl;
                     e->type(Edge::BONE);
                     e->v1()->lock(true);
                     e->v2()->lock(true);
-                    isMesh = false;
                 }
             }
             else
             {
-                isMesh = false;
+                //std::cout << "is bone, skip" << std::endl;
             }
             
             i++;
+        }
+        if(i >= m_edges.size()-1)
+        {
+            stop = true;
         }
     }
     debug();
@@ -58,10 +62,10 @@ void Mesh::dissolveEdge(Edge *edge)
 {
     Vertex *mean = edge->getMeanPosition(); // the mean position on the edge
     m_vertices.push_back(mean);
-    std::cout << glm::to_string(mean->pos()) << std::endl;
+    std::cout << "trying to collapse " << *edge << " @ " << glm::to_string(mean->pos()) << std::endl;
 
     auto edges = edge->getConnectedEdges(); //   all the edges connected
-    std::cout << edges.size() << " edges connected." << std::endl;
+    //std::cout << edges.size() << " edges connected." << std::endl;
 
     for(Edge* e : edges)
     {
@@ -82,15 +86,30 @@ void Mesh::dissolveEdge(Edge *edge)
             else
             {
                 // erreur
+                std::cerr << "edge not connected to the collapsing edge!" << std::endl;
             }
 
         }
         else // edge is locked so is bone
         {
+            Edge *ev = new Edge;   
+            if(e->v1() == edge->v1() || e->v1() == edge->v2()) // e.v1 is connected to edge
+            {
+                ev->v1(e->v1());
+                ev->v2(mean);
+            }
+            else if(e->v2() == edge->v1() || e->v2() == edge->v2()) // e.v2
+            {
+                ev->v1(mean);
+                ev->v2(e->v2());
+            }
+            ev->type(Edge::VIRTUAL);
+            m_edges.push_back(ev);
+            std::cout << "new virtual edge:" << *ev << std::endl;
             // virtual edge ?
         } 
     }
-    std::cout << "bind passed" << std::endl;
+
     // all free edges are now connected to mean
     // go through all edges of mean to detect duplicates and update ATL
     for(auto e1 = mean->edges().begin(); e1 != mean->edges().end(); e1++) // iterator
@@ -100,13 +119,9 @@ void Mesh::dissolveEdge(Edge *edge)
             // if two edges have same vertices and are not the same edge
             if((((*e1)->v1() == (*e2)->v1() && (*e1)->v2() == (*e2)->v2()) || ((*e1)->v1() == (*e2)->v2() && (*e1)->v2() == (*e2)->v1())) && ((*e1) !=(*e2)))
             {
-                //std::cout << "found similar:" << *(*e1) << "(" << (*e1)->faces().size() << ") " << *(*e2) << "("<< (*e2)->faces().size() << ")" << std::endl;
-                
                 Face *f = faceInCommon(*e1, *e2);
                 if(f != nullptr)
                 {
-                    //std::cout << "have a face in common: " << f->id() << std::endl;
-                    
                     // on enlève la face commune de e1 et e2
                     (*e1)->removeFace(f);
                     (*e2)->removeFace(f);
@@ -130,16 +145,22 @@ void Mesh::dissolveEdge(Edge *edge)
                     
                 }
                 
+                // si la face commune était la seule face adjacente aux deux edges, c'est mtn une BONE
+                if((*e1)->faces().size() <= 0)
+                {
+                    (*e1)->v1()->lock(true);
+                    (*e1)->v2()->lock(true);
+                    (*e1)->type(Edge::BONE);
+                }
+
+                // on supprime le doublon de la liste globale
                 m_edges.erase(find(m_edges,*e2));
-                //if((*e2)->v1()->edges().erase(find((*e2)->v1()->edges(),(*e2)))!=(*e2)->v1()->edges().end()){std::cout << "success" << std::endl;}
-                //if((*e2)->v2()->edges().erase(find((*e2)->v2()->edges(),(*e2)))!=(*e2)->v2()->edges().end()){std::cout << "success" << std::endl;}
+                // on supprime le doublon de la liste de mean
                 mean->edges().erase(e2);
                 break; // cannot have another match
             }
         }
     }
-    //std::cout << *edge << std::endl;
-    //m_edges.erase(find(m_edges,edge));
 }
 
 void Mesh::importOFF(std::string filename)
@@ -270,7 +291,7 @@ void Mesh::importOFF(std::string filename)
         m_faces.push_back(f);
     }
     // end
-    std::cout << "Found " << m_vertices.size() << " and " << m_faces.size() << " faces." << std::endl;
+    std::cout << "Found " << m_vertices.size() << "vertices and " << m_faces.size() << " faces." << std::endl;
 
     // put all element of map into a vector
     for(auto it = m_edge_map.begin(); it != m_edge_map.end() ; ++it)
