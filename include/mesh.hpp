@@ -63,6 +63,8 @@ class Mesh
     const std::vector<Edge *> &edges() { return m_edges; }
     const std::vector<Vertex *> &vertices() { return m_vertices; }
 
+    void debug() const;
+
   private:
 
     typedef struct EdgeCouple
