@@ -28,7 +28,7 @@ int Face::id() const
 std::ostream &operator<<(std::ostream &o, Face &f)
 {
     std::stringstream ss;
-    ss << f.id();
+    ss << f.id() << " ";
     for(auto e : f.edges())
     {
         ss << *e;
