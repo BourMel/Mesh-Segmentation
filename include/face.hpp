@@ -12,6 +12,11 @@ class Face
     Face();
 
     void addEdge(Edge *e);
+    /**
+     * @brief Test if the face is a simple polygon (no intersection between edges)
+     * @author Méline BL
+     */
+    bool isSimple();
 
     std::vector<Edge*> &edges();
 

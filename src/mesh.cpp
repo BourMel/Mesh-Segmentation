@@ -46,7 +46,7 @@ void Mesh::skeletonization()
             {
                 //std::cout << "is bone, skip" << std::endl;
             }
-            
+
             i++;
         }
         if(i >= m_edges.size()-1)
@@ -56,6 +56,8 @@ void Mesh::skeletonization()
     }
     debug();
 }
+
+void Mesh::segmentation() {}
 
 // edge: the edge to collapse
 void Mesh::dissolveEdge(Edge *edge)
@@ -107,7 +109,7 @@ void Mesh::dissolveEdge(Edge *edge)
             m_edges.push_back(ev);
             std::cout << "new virtual edge:" << *ev << std::endl;
             // virtual edge ?
-        } 
+        }
     }
 
     // all free edges are now connected to mean
@@ -129,7 +131,7 @@ void Mesh::dissolveEdge(Edge *edge)
                     (*e1)->addFaceATL(f);
                     // si e2 était adjacent à une 2e face, l'ajouter à la liste de e1
                     if((*e2)->faces()[0] != f)
-                    {                        
+                    {
                         (*e1)->addFace((*e2)->faces()[0]);
                     }
 
@@ -142,7 +144,7 @@ void Mesh::dissolveEdge(Edge *edge)
                     {
                         (*e2)->v2()->removeEdge(*e2);
                     }
-                    
+
                 }
                 
                 // si la face commune était la seule face adjacente aux deux edges, c'est mtn une BONE
@@ -349,7 +351,7 @@ void Mesh::exportMesh(std::string filename, std::vector<Mesh *> meshes) {
     glm::vec3 v2 = glm::vec3();
     std::vector<Face*> faces;
     std::vector<Edge*> edges;
-    
+
     int m =  meshes.size();
     int f, e;
     int i, j, k, l;
@@ -367,15 +369,15 @@ void Mesh::exportMesh(std::string filename, std::vector<Mesh *> meshes) {
         //get faces of the current mesh
         faces = meshes[i]->faces();
         f = faces.size();
-        
+
         file << "g " << m << std::endl;
-        
+
         for(j = 0; j < f; j++)
         {
             //get edges of the current face
             edges = faces[j]->edges();
             e = edges.size();
-            
+
             for(k = 0; k< e; k++)
             {
                 //add vertices to the file
@@ -385,15 +387,15 @@ void Mesh::exportMesh(std::string filename, std::vector<Mesh *> meshes) {
                 file << "v " << v1.x << " " << v1.y << " " << v1.z << std::endl;
                 file << "v " << v2.x << " " << v2.y << " " << v2.z << std::endl;
             }
-            
+
             //offset
             c = j*(2*e+2) + m*(f*(2*e+2));
-            
+
             //add faces to the file
             file << "f ";
             for(l = c; l < 2*k+2 + c; i++)
                 file << l << " ";
-            
+
         }
         file << std::endl;
    }
