@@ -2,6 +2,7 @@
 #include "edge.hpp"
 #include "face.hpp"
 #include "utils.hpp"
+#include "output.hpp"
 
 #include <iostream>
 #include <string>
@@ -20,7 +21,7 @@ void Mesh::skeletonization()
     {
         std::size_t i = 0;
 
-        std::cout << "sorting..." << std::endl;
+        std::cout <<"sorting"<< "..." << std::endl;
         std::sort(m_edges.begin(), m_edges.end(), Edge::compEdgePtr);
 
         while(i < m_edges.size())
@@ -31,7 +32,12 @@ void Mesh::skeletonization()
                 if(e->faces().size() > 0) // if an edge is connect to at least one face
                 {
                     dissolveEdge(e);
-                    m_edges.erase(find(m_edges, e));
+                    //m_edges.erase(find(m_edges, e));
+                    std::cout << "erase" << std::endl;
+                    if(e->v1()->locked() == false) {m_vertices.erase(find(m_vertices,e->v1()));}
+                    if(e->v2()->locked() == false) {m_vertices.erase(find(m_vertices,e->v2()));}
+                    m_edges.erase(find(m_edges,e));
+                    std::cout << "erase done" << std::endl;
                     break;              
                 }
                 else // if an edge is not connected to any face, lock it
@@ -94,20 +100,22 @@ void Mesh::dissolveEdge(Edge *edge)
         }
         else // edge is locked so is bone
         {
-            Edge *ev = new Edge;   
+            Edge *ve = new Edge;   
             if(e->v1() == edge->v1() || e->v1() == edge->v2()) // e.v1 is connected to edge
             {
-                ev->v1(e->v1());
-                ev->v2(mean);
+                ve->v1(e->v1());
+                ve->v2(mean);
             }
             else if(e->v2() == edge->v1() || e->v2() == edge->v2()) // e.v2
             {
-                ev->v1(mean);
-                ev->v2(e->v2());
+                ve->v1(mean);
+                ve->v2(e->v2());
             }
-            ev->type(Edge::VIRTUAL);
-            m_edges.push_back(ev);
-            std::cout << "new virtual edge:" << *ev << std::endl;
+            ve->v1()->lock(true);
+            ve->v2()->lock(true);
+            ve->type(Edge::VIRTUAL);
+            m_edges.push_back(ve);
+            std::cout << "new virtual edge:" << *ve << std::endl;
             // virtual edge ?
         }
     }
