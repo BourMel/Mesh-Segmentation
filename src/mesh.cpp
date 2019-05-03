@@ -2,7 +2,6 @@
 #include "edge.hpp"
 #include "face.hpp"
 #include "utils.hpp"
-#include <glm/gtx/string_cast.hpp>
 
 #include <iostream>
 #include <string>
@@ -10,90 +9,6 @@
 
 Mesh::Mesh()
 {
-}
-
-void Mesh::skeletonization()
-{
-    std::cout << "sorting..." << std::endl;
-    //mergeSort(m_edges, 0, m_edges.size()/2);
-    std::cout << "decimating..." << std::endl;
-    for(std::size_t i = 0; i < m_edges.size(); i++)
-    {
-        Edge *e = m_edges[i];
-        if(e->faces().size() > 0) // if an edge is connect to at least one face
-        {
-            dissolveEdge(e);
-        }
-        else // if an edge is not connected to any face, lock it
-        {
-            e->type(Edge::BONE);
-            e->v1()->lock(true);
-            e->v2()->lock(true);
-        }
-    }
-}
-
-// edge: the edge to collapse
-void Mesh::dissolveEdge(Edge *edge)
-{
-    Vertex *mean = edge->getMeanPosition(); // the mean position on the edge
-    m_vertices.push_back(mean);
-    std::cout << glm::to_string(mean->pos()) << std::endl;
-
-    auto edges = edge->getConnectedEdges(); //   all the edges connected
-    std::cout << edges.size() << " edges connected." << std::endl;
-
-    for(Edge* e : edges)
-    {
-        if(e->isLocked() == false)
-        {
-            if(e->v1() == edge->v1() || e->v1() == edge->v2()) // e.v1 is connected to edge
-            {
-                e->v1()->edges().erase(find(e->v1()->edges(),e));
-                e->v1(mean);
-                mean->addEdge(e);
-            }
-            else if(e->v2() == edge->v1() || e->v2() == edge->v2()) // e.v2
-            {
-                e->v2()->edges().erase(find(e->v2()->edges(),e));
-                e->v2(mean);
-                mean->addEdge(e);
-            }
-            else
-            {
-                // erreur
-            }
-
-        }
-        else // edge is locked so is bone
-        {
-            // virtual edge ?
-        } 
-    }
-    // PASS
-    // all free edges are now connected to mean
-    // go through all edges of mean to detect duplicates and update ATL
-    for(Edge *e1 : mean->edges())
-    {
-        for(auto e2 = mean->edges().begin(); e2 != mean->edges().end(); e2++)
-        {
-            // if two edges have same vertices and are not the same edge
-            if(((e1->v1() == (*e2)->v1() && e1->v2() == (*e2)->v2()) || (e1->v1() == (*e2)->v2() && e1->v2() == (*e2)->v1())) && (e1 !=(*e2)))
-            {
-                std::cout << "found similar:" << e1->v1()->id() << " " << e1->v2()->id() << " | " << (*e2)->v1()->id() << " " << (*e2)->v2()->id() << std::endl;
-                Face *f = faceInCommon(e1, *e2);
-                if(f != nullptr)
-                {
-                    e1->faces().erase(find(e1->faces(),f));
-                    e1->addFaceATL(f);
-                    std::cout << "have a face in common" << std::endl;
-                }
-                m_edges.erase(find(m_edges,*e2));
-                mean->edges().erase(e2);
-            }
-        }
-    }
-    m_edges.erase(find(m_edges,edge));
 }
 
 void Mesh::importOFF(std::string filename)
@@ -224,7 +139,7 @@ void Mesh::importOFF(std::string filename)
         m_faces.push_back(f);
     }
     // end
-    std::cout << "Found " << m_vertices.size() << "vertices  and " << m_faces.size() << " faces." << std::endl;
+    std::cout << "Found " << m_vertices.size() << " and " << m_faces.size() << " faces." << std::endl;
 
     // put all element of map into a vector
     for(auto it = m_edge_map.begin(); it != m_edge_map.end() ; ++it)
@@ -252,29 +167,88 @@ void Mesh::exportOBJ(std::string filename)
         v1 = m_edges[i]->v1()->pos();
         v2 = m_edges[i]->v2()->pos();
 
-        file << "v " << v1.x << " " << v1.y << " " << v1.z;
-        file << "v " << v2.x << " " << v2.y << " " << v2.z;
+        file << "v " << v1.x << " " << v1.y << " " << v1.z << std::endl;
+        file << "v " << v2.x << " " << v2.y << " " << v2.z << std::endl;
 
         // virtual edges
         if(m_edges[i]->type() == Edge::VIRTUAL)
         {
-            file << "g virtual";
-            file << "usemtl blue";
+            file << "g virtual" << std::endl;
+            file << "usemtl blue" << std::endl;
         }
         // bones
         else if(m_edges[i]->type() == Edge::BONE)
         {
-            file << "g bone";
-            file << "usemtl red";
+            file << "g bone" << std::endl;
+            file << "usemtl red" << std::endl;
         }
 
         // line between the vertices
-        file << "l " << k << " " << k+1;
+        file << "l " << k << " " << k+1 << std::endl;
         k+=2;
     }
 
     file.close();
 }
+
+void Mesh::exportMesh(std::string filename, std::vector<Mesh *> meshes) {
+    std::ofstream file;
+    glm::vec3 v1 = glm::vec3();
+    glm::vec3 v2 = glm::vec3();
+    std::vector<Face*> faces;
+    std::vector<Edge*> edges;
+    
+    int m =  meshes.size();
+    int f, e;
+    int i, j, k, l;
+    int c;
+
+    file.open(filename);
+    if (!file.is_open())
+    {
+        std::cerr << "Unable to open file: " << filename << std::endl;
+        return;
+    }
+
+    for (i = 0; i < m; i++)
+    {
+        //get faces of the current mesh
+        faces = meshes[i]->faces();
+        f = faces.size();
+        
+        file << "g " << m << std::endl;
+        
+        for(j = 0; j < f; j++)
+        {
+            //get edges of the current face
+            edges = faces[j]->edges();
+            e = edges.size();
+            
+            for(k = 0; k< e; k++)
+            {
+                //add vertices to the file
+                v1 = edges[i]->v1()->pos();
+                v2 = edges[i]->v2()->pos();
+
+                file << "v " << v1.x << " " << v1.y << " " << v1.z << std::endl;
+                file << "v " << v2.x << " " << v2.y << " " << v2.z << std::endl;
+            }
+            
+            //offset
+            c = j*(2*e+2) + m*(f*(2*e+2));
+            
+            //add faces to the file
+            file << "f ";
+            for(l = c; l < 2*k+2 + c; i++)
+                file << l << " ";
+            
+        }
+        file << std::endl;
+   }
+   file.close();
+}
+
+
 
 Edge *Mesh::findEdge(Vertex *a, Vertex *b)
 {
