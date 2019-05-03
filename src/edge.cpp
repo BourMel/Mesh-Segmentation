@@ -2,6 +2,7 @@
 
 #include "edge.hpp"
 #include "vertex.hpp"
+#include "face.hpp"
 #include "utils.hpp"
 
 #include <ostream>
@@ -87,6 +88,31 @@ std::vector<Edge*> Edge::getConnectedEdges()
     }
 
     return edges;
+}
+
+void Edge::computeArea() {
+    float totalArea = 0.0f;
+    float currentArea = 0.0f;
+    // lengths of edges
+    float a = 0.0f;
+    float b = 0.0f;
+    float c = 0.0f;
+
+    for(unsigned int i=0; i<m_ATL.size(); i++) {
+      currentArea = 0.0f;
+
+      // we get the length of each edge of the face (triangle)
+      a = sqrt(m_ATL[i]->edges()[0]->cost());
+      b = sqrt(m_ATL[i]->edges()[1]->cost());
+      c = sqrt(m_ATL[i]->edges()[2]->cost());
+
+      // Heron's formula
+      currentArea = (a + b + c)*(-a + b + c)*(a - b + c)*(a + b -c);
+      currentArea = sqrt(currentArea)/4;
+
+      totalArea += currentArea;
+    }
+    m_area = totalArea;
 }
 
 void Edge::addFace(Face *face)

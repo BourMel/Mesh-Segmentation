@@ -48,6 +48,12 @@ class Edge
      */
     std::vector<Edge*> getConnectedEdges();
 
+    /**
+     * @brief Compute an edge's area (with ATL list) and save it in the object
+     * @author Méline BL
+     */
+    void computeArea();
+
     void addFace(Face *face);
     void removeFace(Face *face);
     void addFaceATL(Face *face);
@@ -86,6 +92,7 @@ class Edge
     EdgeType m_type;
     bool m_isLocked;
     float m_cost;
+    float m_area;
     int m_id;
 };
 
