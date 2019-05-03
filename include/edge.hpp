@@ -23,7 +23,7 @@ class Edge
      * @brief The cost of an edge is defined by its length.
      * We use squared length to optimize the process as
      * we only need the cost to sort the edges.
-     * 
+     *
      * @return The edge's square length
      */
     float cost() const;
@@ -35,8 +35,14 @@ class Edge
     Vertex *getMeanPosition();
 
     /**
+     * @brief Returns true if there's an intersection between 2 edges
+     * @author Méline BL
+     */
+    bool intersectWith(Edge* e);
+
+    /**
      * @brief Get the Connected Edges object
-     * 
+     *
      * @return std::vector<Edge*>
      * @author Nathan R.
      */

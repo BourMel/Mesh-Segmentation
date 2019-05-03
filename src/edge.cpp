@@ -28,6 +28,45 @@ Vertex *Edge::getMeanPosition()
                                 (m_v1->pos().z + m_v2->pos().z) / 2));
 }
 
+bool Edge::intersectWith(Edge* e) {
+    Vertex* A = m_v1;
+    Vertex* B = m_v2;
+    Vertex* C = e->v1();
+    Vertex* D = e->v2();
+
+    glm::mat3 ABC, ABD, CDA, CDB;
+
+    // intersection if det(ABC) and det(ABD) are opposed
+    ABC = glm::mat3(
+        A->pos().x, A->pos().y, A->pos().z,
+        B->pos().x, B->pos().y, B->pos().z,
+        C->pos().x, C->pos().y, C->pos().z);
+    ABD = glm::mat3(
+        A->pos().x, A->pos().y, A->pos().z,
+        B->pos().x, B->pos().y, B->pos().z,
+        D->pos().x, D->pos().y, D->pos().z);
+
+    if(glm::determinant(ABC)*glm::determinant(ABD) < 0) {
+      return true;
+    }
+
+    // intersection si det(CDA) et det(CDB) sont de signe opposé
+    CDA = glm::mat3(
+        C->pos().x, C->pos().y, C->pos().z,
+        D->pos().x, D->pos().y, D->pos().z,
+        A->pos().x, A->pos().y, A->pos().z);
+    CDB = glm::mat3(
+        C->pos().x, C->pos().y, C->pos().z,
+        D->pos().x, D->pos().y, D->pos().z,
+        B->pos().x, B->pos().y, B->pos().z);
+
+    if(glm::determinant(CDA)*glm::determinant(CDB) < 0) {
+      return true;
+    }
+
+    return false;
+}
+
 std::vector<Edge*> Edge::getConnectedEdges()
 {
     std::vector<Edge*> edges;
@@ -46,7 +85,7 @@ std::vector<Edge*> Edge::getConnectedEdges()
             edges.push_back(e);
         }
     }
-    
+
     return edges;
 }
 

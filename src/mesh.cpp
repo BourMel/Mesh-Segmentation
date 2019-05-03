@@ -31,7 +31,7 @@ void Mesh::skeletonization()
                     debug();
                     dissolveEdge(e);
                     m_edges.erase(find(m_edges, e));
-                    isBone = false;              
+                    isBone = false;
                 }
                 else // if an edge is not connected to any face, lock it
                 {
@@ -46,12 +46,14 @@ void Mesh::skeletonization()
             {
                 isMesh = false;
             }
-            
+
             i++;
         }
     }
     debug();
 }
+
+void Mesh::segmentation() {}
 
 // edge: the edge to collapse
 void Mesh::dissolveEdge(Edge *edge)
@@ -88,7 +90,7 @@ void Mesh::dissolveEdge(Edge *edge)
         else // edge is locked so is bone
         {
             // virtual edge ?
-        } 
+        }
     }
     std::cout << "bind passed" << std::endl;
     // all free edges are now connected to mean
@@ -101,12 +103,12 @@ void Mesh::dissolveEdge(Edge *edge)
             if((((*e1)->v1() == (*e2)->v1() && (*e1)->v2() == (*e2)->v2()) || ((*e1)->v1() == (*e2)->v2() && (*e1)->v2() == (*e2)->v1())) && ((*e1) !=(*e2)))
             {
                 //std::cout << "found similar:" << *(*e1) << "(" << (*e1)->faces().size() << ") " << *(*e2) << "("<< (*e2)->faces().size() << ")" << std::endl;
-                
+
                 Face *f = faceInCommon(*e1, *e2);
                 if(f != nullptr)
                 {
                     //std::cout << "have a face in common: " << f->id() << std::endl;
-                    
+
                     // on enlève la face commune de e1 et e2
                     (*e1)->removeFace(f);
                     (*e2)->removeFace(f);
@@ -114,7 +116,7 @@ void Mesh::dissolveEdge(Edge *edge)
                     (*e1)->addFaceATL(f);
                     // si e2 était adjacent à une 2e face, l'ajouter à la liste de e1
                     if((*e2)->faces()[0] != f)
-                    {                        
+                    {
                         (*e1)->addFace((*e2)->faces()[0]);
                     }
 
@@ -127,9 +129,9 @@ void Mesh::dissolveEdge(Edge *edge)
                     {
                         (*e2)->v2()->removeEdge(*e2);
                     }
-                    
+
                 }
-                
+
                 m_edges.erase(find(m_edges,*e2));
                 //if((*e2)->v1()->edges().erase(find((*e2)->v1()->edges(),(*e2)))!=(*e2)->v1()->edges().end()){std::cout << "success" << std::endl;}
                 //if((*e2)->v2()->edges().erase(find((*e2)->v2()->edges(),(*e2)))!=(*e2)->v2()->edges().end()){std::cout << "success" << std::endl;}
@@ -328,7 +330,7 @@ void Mesh::exportMesh(std::string filename, std::vector<Mesh *> meshes) {
     glm::vec3 v2 = glm::vec3();
     std::vector<Face*> faces;
     std::vector<Edge*> edges;
-    
+
     int m =  meshes.size();
     int f, e;
     int i, j, k, l;
@@ -346,15 +348,15 @@ void Mesh::exportMesh(std::string filename, std::vector<Mesh *> meshes) {
         //get faces of the current mesh
         faces = meshes[i]->faces();
         f = faces.size();
-        
+
         file << "g " << m << std::endl;
-        
+
         for(j = 0; j < f; j++)
         {
             //get edges of the current face
             edges = faces[j]->edges();
             e = edges.size();
-            
+
             for(k = 0; k< e; k++)
             {
                 //add vertices to the file
@@ -364,15 +366,15 @@ void Mesh::exportMesh(std::string filename, std::vector<Mesh *> meshes) {
                 file << "v " << v1.x << " " << v1.y << " " << v1.z << std::endl;
                 file << "v " << v2.x << " " << v2.y << " " << v2.z << std::endl;
             }
-            
+
             //offset
             c = j*(2*e+2) + m*(f*(2*e+2));
-            
+
             //add faces to the file
             file << "f ";
             for(l = c; l < 2*k+2 + c; i++)
                 file << l << " ";
-            
+
         }
         file << std::endl;
    }

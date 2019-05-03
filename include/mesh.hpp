@@ -30,9 +30,9 @@ class Mesh
      * @author Tiphaine R.
      */
     void exportOBJ(std::string filename);
-    
+
     /**
-     * @brief Export mesh to Obj file 
+     * @brief Export mesh to Obj file
      *
      * @param filename The path to the file
      * @param meshes Meshes to export
@@ -66,6 +66,7 @@ class Mesh
     void deleteFace(Face* face);
 
     void skeletonization();
+    void segmentation();
 
     void dissolveEdge(Edge* edge);
 
