@@ -41,29 +41,34 @@ class Mesh
     void exportMesh(std::string filename, std::vector<Mesh *> meshes);
 
 
-    /*!
-    * \brief Delete edges present in both lists (because they link
+    /**
+    * @brief Delete edges present in both lists (because they link
     * the 2 same vertices) and delete the flattened faces
     *
-    * \param l1 : list of edges
-    * \param l2 : list of edges
-    * \return List of incident faces that were flattened
-    * \author Méline BL
+    * @param l1 : list of edges
+    * @param l2 : list of edges
+    * @return List of incident faces that were flattened
+    * @author Méline BL
     */
     std::vector<Face*> cleanDouble(std::vector<Edge*> l1, std::vector<Edge*> l2);
 
-    /*!
-    * \brief Delete an edge (in the mesh)
-    * \param edge : pointer
-    * \author Méline BL
+    /**
+    * @brief Delete an edge (in the mesh)
+    * @param edge : pointer
+    * @author Méline BL
     */
     void deleteEdge(Edge* edge);
-    /*!
-    * \brief Delete a face (in the mesh)
-    * \param face : pointer
-    * \author Méline BL
+    /**
+    * @brief Delete a face (in the mesh)
+    * @param face : pointer
+    * @author Méline BL
     */
     void deleteFace(Face* face);
+    /**
+    * @brief Construct faces of a polygon with its edges only
+    * @author Méline BL
+    */
+    void constructFaces();
 
     void skeletonization();
     void segmentation();

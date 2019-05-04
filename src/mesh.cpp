@@ -36,7 +36,7 @@ void Mesh::skeletonization()
                     if(e->v1()->locked() == false) {m_vertices.erase(find(m_vertices,e->v1()));}
                     if(e->v2()->locked() == false) {m_vertices.erase(find(m_vertices,e->v2()));}
                     m_edges.erase(find(m_edges,e));
-                    break;              
+                    break;
                 }
                 else // if an edge is not connected to any face, lock it
                 {
@@ -105,7 +105,7 @@ void Mesh::dissolveEdge(Edge *edge)
         }
         else // edge is locked so is bone
         {
-            Edge *ve = new Edge;   
+            Edge *ve = new Edge;
             if(e->v1() == edge->v1() || e->v1() == edge->v2()) // e.v1 is connected to edge
             {
                 ve->v1(e->v1());
@@ -159,7 +159,7 @@ void Mesh::dissolveEdge(Edge *edge)
                     }
 
                 }
-                
+
                 // si la face commune était la seule face adjacente aux deux edges, c'est mtn une BONE
                 if((*e1)->faces().size() <= 0)
                 {
@@ -176,6 +176,90 @@ void Mesh::dissolveEdge(Edge *edge)
                 break; // cannot have another match
             }
         }
+    }
+}
+
+void Mesh::constructFaces() {
+    std::vector<Edge*> belongsToFace;
+
+    for(unsigned int i=0; i<m_edges.size() - 1; i++) {
+      // ignore edges that already belongs to a face
+      if(std::find(belongsToFace.begin(), belongsToFace.end(), m_edges[i]) != belongsToFace.end()) {
+        break;
+      }
+
+      for(unsigned int j=i+1; j<m_edges.size(); j++) {
+        if(std::find(belongsToFace.begin(), belongsToFace.end(), m_edges[j]) != belongsToFace.end()) {
+          break;
+        }
+
+        Edge* e1 = m_edges[i];
+        Edge* e2 = m_edges[j];
+        Vertex* sharedVertex = NULL;
+
+        // they share a vertex
+        if(e1->v1() == e2->v1() || e1->v1() == e2->v2()) {
+          sharedVertex = e1->v1();
+        }
+        if(e1->v2() == e2->v1() || e1->v2() == e2->v2()) {
+          sharedVertex = e1->v2();
+        }
+
+        if(sharedVertex != NULL) {
+          Face* face = new Face();
+          face->edges().push_back(e1);
+          face->edges().push_back(e2);
+          belongsToFace.push_back(e1);
+          belongsToFace.push_back(e2);
+
+          Vertex* currentVertex = sharedVertex;
+
+          // get to the next vertex
+          for(unsigned int k=0; k<m_edges.size(); k++) {
+            bool foundNext = false;
+
+            if(m_edges[k]->v1() == currentVertex) {
+              currentVertex = m_edges[k]->v2();
+              foundNext = true;
+            } else if(m_edges[k]->v2() == currentVertex) {
+              currentVertex = m_edges[k]->v1();
+              foundNext = true;
+            }
+
+            if(foundNext) {
+              // add the edge to the face
+              face->edges().push_back(m_edges[k]);
+              belongsToFace.push_back(m_edges[k]);
+              break;
+            }
+          }
+
+          // we look at the entire face
+          while(currentVertex != sharedVertex) {
+            // get to the next vertex
+            for(unsigned int k=0; k<m_edges.size(); k++) {
+              bool foundNext = false;
+
+              if(m_edges[k]->v1() == currentVertex) {
+                currentVertex = m_edges[k]->v2();
+                foundNext = true;
+              } else if(m_edges[k]->v2() == currentVertex) {
+                currentVertex = m_edges[k]->v1();
+                foundNext = true;
+              }
+
+              if(foundNext) {
+                // add the edge to the face
+                face->edges().push_back(m_edges[k]);
+                belongsToFace.push_back(m_edges[k]);
+                break;
+              }
+            }
+          }
+
+          m_faces.push_back(face);
+        }
+      }
     }
 }
 
