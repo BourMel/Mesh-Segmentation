@@ -103,6 +103,7 @@ class Mesh
     std::vector<Edge *> m_edges;
     std::map<std::pair<int, int>, Edge *> m_edge_map;
     std::vector<Vertex *> m_vertices;
+    int m_nbBV;
 };
 
 #endif

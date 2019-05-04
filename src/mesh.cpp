@@ -12,6 +12,7 @@
 
 Mesh::Mesh()
 {
+    m_nbBV = 0;
 }
 
 void Mesh::skeletonization()
@@ -21,7 +22,7 @@ void Mesh::skeletonization()
     {
         std::size_t i = 0;
 
-        std::cout <<"sorting"<< "..." << std::endl;
+        //std::cout <<"sorting"<< "..." << std::endl;
         std::sort(m_edges.begin(), m_edges.end(), Edge::compEdgePtr);
 
         while(i < m_edges.size())
@@ -32,12 +33,9 @@ void Mesh::skeletonization()
                 if(e->faces().size() > 0) // if an edge is connect to at least one face
                 {
                     dissolveEdge(e);
-                    //m_edges.erase(find(m_edges, e));
-                    std::cout << "erase" << std::endl;
                     if(e->v1()->locked() == false) {m_vertices.erase(find(m_vertices,e->v1()));}
                     if(e->v2()->locked() == false) {m_vertices.erase(find(m_vertices,e->v2()));}
                     m_edges.erase(find(m_edges,e));
-                    std::cout << "erase done" << std::endl;
                     break;              
                 }
                 else // if an edge is not connected to any face, lock it
@@ -46,6 +44,7 @@ void Mesh::skeletonization()
                     e->type(Edge::BONE);
                     e->v1()->lock(true);
                     e->v2()->lock(true);
+                    m_nbBV++;
                 }
             }
             else
@@ -59,7 +58,13 @@ void Mesh::skeletonization()
         {
             stop = true;
         }
+        else
+        {
+            std::cout << "\r" << static_cast<float>(m_nbBV)/static_cast<float>(m_edges.size())<<std::flush;
+            //std::cout << m_nbBV << std::endl;
+        }
     }
+    std::cout << std::endl;
     debug();
 }
 
@@ -70,7 +75,7 @@ void Mesh::dissolveEdge(Edge *edge)
 {
     Vertex *mean = edge->getMeanPosition(); // the mean position on the edge
     m_vertices.push_back(mean);
-    std::cout << "trying to collapse " << *edge << " @ " << glm::to_string(mean->pos()) << std::endl;
+    //std::cout << "trying to collapse " << *edge << " @ " << glm::to_string(mean->pos()) << std::endl;
 
     auto edges = edge->getConnectedEdges(); //   all the edges connected
     //std::cout << edges.size() << " edges connected." << std::endl;
@@ -115,8 +120,8 @@ void Mesh::dissolveEdge(Edge *edge)
             ve->v2()->lock(true);
             ve->type(Edge::VIRTUAL);
             m_edges.push_back(ve);
-            std::cout << "new virtual edge:" << *ve << std::endl;
-            // virtual edge ?
+            m_nbBV++;
+            //std::cout << "new virtual edge:" << *ve << std::endl;
         }
     }
 
@@ -161,6 +166,7 @@ void Mesh::dissolveEdge(Edge *edge)
                     (*e1)->v1()->lock(true);
                     (*e1)->v2()->lock(true);
                     (*e1)->type(Edge::BONE);
+                    m_nbBV++;
                 }
 
                 // on supprime le doublon de la liste globale
@@ -311,9 +317,6 @@ void Mesh::importOFF(std::string filename)
 void Mesh::exportOBJ(std::string filename)
 {
     std::ofstream file;   // output file
-    glm::vec3 v1 = glm::vec3();
-    glm::vec3 v2 = glm::vec3();
-    int k = 1;
 
     //open file
     file.open(filename);
@@ -323,31 +326,32 @@ void Mesh::exportOBJ(std::string filename)
         return;
     }
 
-    for(unsigned int i=0; i<m_edges.size(); i++)
+    file << "o objet" << std::endl;
+    unsigned int i = 1;
+    for(Vertex *v : m_vertices)
     {
-        // get vertices
-        v1 = m_edges[i]->v1()->pos();
-        v2 = m_edges[i]->v2()->pos();
+        file << "v " << v->pos().x << " " << v->pos().y << " " << v->pos().z << std::endl;
+        v->exportId(i);
+        i++;
+    }
 
-        file << "v " << v1.x << " " << v1.y << " " << v1.z << std::endl;
-        file << "v " << v2.x << " " << v2.y << " " << v2.z << std::endl;
-
+    for(Edge *e : m_edges)
+    {
         // virtual edges
-        if(m_edges[i]->type() == Edge::VIRTUAL)
+        if(e->type() == Edge::VIRTUAL)
         {
-            file << "g virtual" << std::endl;
-            file << "usemtl blue" << std::endl;
+            //file << "g virtual" << std::endl;
+            //file << "usemtl blue" << std::endl;
         }
         // bones
-        else if(m_edges[i]->type() == Edge::BONE)
+        else if(e->type() == Edge::BONE)
         {
-            file << "g bone" << std::endl;
-            file << "usemtl red" << std::endl;
+            //file << "g bone" << std::endl;
+            //file << "usemtl red" << std::endl;
         }
 
         // line between the vertices
-        file << "l " << k << " " << k+1 << std::endl;
-        k+=2;
+        file << "l " << e->v1()->exportId() << " " << e->v2()->exportId() << std::endl;
     }
 
     file.close();
