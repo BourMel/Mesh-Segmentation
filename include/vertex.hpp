@@ -34,10 +34,12 @@ class Vertex
     int id() const;
     std::vector<Edge *> &edges();
     bool locked();
+    unsigned int exportId();
 
     //setter
     void pos(glm::vec3 p);
     void lock(bool l);
+    void exportId(unsigned int id);
 
     // debug
     friend std::ostream &operator<<(std::ostream &o, Vertex &v);
@@ -47,6 +49,7 @@ class Vertex
     int m_id;
     glm::vec3 m_pos;
     bool m_locked;
+    unsigned int m_exportId;
 };
 
 #endif

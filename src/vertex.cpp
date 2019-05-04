@@ -15,6 +15,7 @@ Vertex::Vertex(glm::vec3 pos) : m_pos(pos)
 
     m_id = id++;
     m_locked = false;
+    m_exportId = 0;
 }
 
 const glm::vec3& Vertex::pos() const
@@ -30,6 +31,11 @@ int Vertex::id() const
 bool Vertex::locked()
 {
     return m_locked;
+}
+
+unsigned int Vertex::exportId()
+{
+    return m_exportId;
 }
 
 void Vertex::pos(glm::vec3 p)
@@ -59,6 +65,10 @@ void Vertex::removeEdge(Edge *e)
     m_edges.erase(find(m_edges,e));
 }
 
+void Vertex::exportId(unsigned int id)
+{
+    m_exportId = id;
+}
 std::vector<Edge *> &Vertex::edges()
 {
     return m_edges;
