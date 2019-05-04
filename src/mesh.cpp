@@ -181,21 +181,26 @@ void Mesh::dissolveEdge(Edge *edge)
 
 void Mesh::constructFaces() {
     std::vector<Edge*> belongsToFace;
+    Edge* e1;
+    Edge* e2;
+    Vertex* sharedVertex = NULL;
+    bool faceOver; // not working
+    int count = m_vertices.size(); // avoid infinite loop (TODO)
 
     for(unsigned int i=0; i<m_edges.size() - 1; i++) {
       // ignore edges that already belongs to a face
       if(std::find(belongsToFace.begin(), belongsToFace.end(), m_edges[i]) != belongsToFace.end()) {
-        break;
+        continue;
       }
 
       for(unsigned int j=i+1; j<m_edges.size(); j++) {
         if(std::find(belongsToFace.begin(), belongsToFace.end(), m_edges[j]) != belongsToFace.end()) {
-          break;
+          continue;
         }
 
-        Edge* e1 = m_edges[i];
-        Edge* e2 = m_edges[j];
-        Vertex* sharedVertex = NULL;
+        e1 = m_edges[i];
+        e2 = m_edges[j];
+        sharedVertex = NULL;
 
         // they share a vertex
         if(e1->v1() == e2->v1() || e1->v1() == e2->v2()) {
@@ -208,14 +213,15 @@ void Mesh::constructFaces() {
         if(sharedVertex != NULL) {
           Face* face = new Face();
           face->edges().push_back(e1);
-          face->edges().push_back(e2);
           belongsToFace.push_back(e1);
-          belongsToFace.push_back(e2);
 
           Vertex* currentVertex = sharedVertex;
 
           // get to the next vertex
           for(unsigned int k=0; k<m_edges.size(); k++) {
+            if(std::find(belongsToFace.begin(), belongsToFace.end(), m_edges[k]) != belongsToFace.end()) {
+              continue;
+            }
             bool foundNext = false;
 
             if(m_edges[k]->v1() == currentVertex) {
@@ -234,10 +240,17 @@ void Mesh::constructFaces() {
             }
           }
 
+          faceOver = false;
+
           // we look at the entire face
-          while(currentVertex != sharedVertex) {
+          while((currentVertex != sharedVertex) && (!faceOver) && count > 0) {
+            count--;
+
             // get to the next vertex
             for(unsigned int k=0; k<m_edges.size(); k++) {
+              if(std::find(belongsToFace.begin(), belongsToFace.end(), m_edges[k]) != belongsToFace.end()) {
+                continue;
+              }
               bool foundNext = false;
 
               if(m_edges[k]->v1() == currentVertex) {
@@ -253,6 +266,11 @@ void Mesh::constructFaces() {
                 face->edges().push_back(m_edges[k]);
                 belongsToFace.push_back(m_edges[k]);
                 break;
+              }
+
+              // we didn't find the next vertex
+              if(k == m_edges.size()-1) {
+                faceOver = true;
               }
             }
           }
