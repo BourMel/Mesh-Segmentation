@@ -13,6 +13,7 @@ int main(int argc, char const *argv[])
         //mesh.dissolveEdge(mesh.edges()[4]);
         //mesh.dissolveEdge(mesh.edges()[0]);
         mesh.skeletonization();
+        mesh.exportOBJ("out.obj");
     }
     
     return 0;
