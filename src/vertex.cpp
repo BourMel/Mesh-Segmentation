@@ -1,3 +1,5 @@
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include "vertex.hpp"
 
 #include <glm/gtx/string_cast.hpp>

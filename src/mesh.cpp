@@ -1,3 +1,5 @@
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include "mesh.hpp"
 #include "edge.hpp"
 #include "face.hpp"
