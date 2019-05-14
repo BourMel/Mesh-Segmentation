@@ -350,9 +350,9 @@ void Mesh::importOFF(std::string filename)
         std::getline(file, line);
         numLine++;
 
-        int nbv, id;
+        uint nbv, id;
         std::istringstream iss(line);
-        std::vector<int> indices;
+        std::vector<uint> indices;
 
         // read number of vertices in face
         if (!(iss >> nbv))
@@ -363,7 +363,7 @@ void Mesh::importOFF(std::string filename)
 
         // read indices of vertices connected to the face
         // expects to read at least nbv indices
-        for (int i = 0; i < nbv; i++)
+        for (uint i = 0; i < nbv; i++)
         {
             if (iss >> id)
             {
@@ -416,6 +416,126 @@ void Mesh::importOFF(std::string filename)
     // put all element of map into a vector
     for(auto it = m_edge_map.begin(); it != m_edge_map.end() ; ++it)
         m_edges.push_back(it->second);
+}
+
+void Mesh::importOBJ(std::string filename)
+{
+    std::ifstream file;   // input file
+    std::string line;     // current line
+
+    int numLine = 0;       // number of the current line
+
+    // open file
+    file.open(filename);
+    if (!file.is_open())
+    {
+        std::cerr << "Unable to open file: " << filename << std::endl;
+        return;
+    }
+    else
+    {
+        std::cout << "filename: " << filename << std::endl;
+    }
+
+    while(std::getline(file, line))
+    {
+        numLine++;
+
+        std::string type;
+
+        // lecture de la ligne
+        std::istringstream iss(line);
+
+        // lecture du flag
+        iss >> type;
+        std::cout << type << std::endl;
+
+        if(type == "v") // vertex declaration
+        {
+            float x, y, z;
+            // tries to read at least 3 consecutive numbers as float
+            if (iss >> x >> y >> z)
+            {
+                m_vertices.push_back(new Vertex({x, y, z}));
+            }
+            else
+            {
+                std::cout << "Wrong vertex format (at " << numLine << ")" << std::endl;
+                return;
+            }
+        }
+        else if(type == "f") // face declaration
+        {
+            std::vector<uint> indices;
+            for (int i = 0; i < 3; i++)
+            {
+                uint t;
+                if(iss >> t)
+                {
+                    indices.push_back(t-1);
+                }
+                else
+                {
+                    std::cerr << "error" << std::endl;
+                    return;
+                }
+            }
+            Face *f = new Face;
+
+            // sort indices list in ascending order
+            bubbleSort(indices);
+
+            // gen edge couple [0,1] [1,2] [0,2]
+            // we only want edges with v1.id < v2.id
+            std::vector<EdgeCouple> edgeCouples;
+            edgeCouples.push_back(EdgeCouple(m_vertices[indices[0]], m_vertices[indices[1]]));
+            edgeCouples.push_back(EdgeCouple(m_vertices[indices[1]], m_vertices[indices[2]]));
+            edgeCouples.push_back(EdgeCouple(m_vertices[indices[0]], m_vertices[indices[2]]));
+
+            // for every edge couples
+            for (auto ec : edgeCouples)
+            {
+                // try to find if the edge already exists
+                Edge *e = findEdge(ec.v1, ec.v2);
+                if (!e) // if it does't exists, create the edge and insert it in the map
+                {
+                    e = new Edge(ec.v1, ec.v2);
+                    ec.v1->addEdge(e);
+                    ec.v2->addEdge(e);
+
+                    m_edge_map.insert({{e->v1()->id(), e->v2()->id()}, e});
+                }
+
+                // add the current face to the edge
+                e->addFace(f);
+                // add the edge to the face
+                f->addEdge(e);
+            }
+            // add the face to the mesh
+            m_faces.push_back(f);
+        }
+        else if(type == "o") // new object (with name) :: UNSUPPORTED
+        {
+
+        }
+        else if(type == "#") // comment
+        {
+            //pass
+        }
+        else if(type == "s")
+        {
+            // pass
+        }
+        else
+        {
+            std::cerr << "OBJ flag not handled:\"" << type << "\" (at "<<numLine<<")"<< std::endl;
+        }
+    }
+    std::cout << "done" << std::endl;
+    // put all element of map into a vector
+    for(auto it = m_edge_map.begin(); it != m_edge_map.end() ; ++it)
+        m_edges.push_back(it->second);
+    std::cout << "done 2" << std::endl;
 }
 
 void Mesh::exportOBJ(std::string filename)

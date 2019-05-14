@@ -21,7 +21,14 @@ class Mesh
      * @author Nathan R.
      */
     void importOFF(std::string filename);
-    //void exportOFF(std::string filename);
+
+    /**
+     * @brief Import OBJ file
+     *
+     * @param filename The path to the file
+     * @author Nathan R.
+     */
+    void importOBJ(std::string filename);
 
     /**
      * @brief Export skeleton to Obj file
