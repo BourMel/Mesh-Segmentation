@@ -448,7 +448,6 @@ void Mesh::importOBJ(std::string filename)
 
         // lecture du flag
         iss >> type;
-        std::cout << type << std::endl;
 
         if(type == "v") // vertex declaration
         {
@@ -531,11 +530,9 @@ void Mesh::importOBJ(std::string filename)
             std::cerr << "OBJ flag not handled:\"" << type << "\" (at "<<numLine<<")"<< std::endl;
         }
     }
-    std::cout << "done" << std::endl;
     // put all element of map into a vector
     for(auto it = m_edge_map.begin(); it != m_edge_map.end() ; ++it)
         m_edges.push_back(it->second);
-    std::cout << "done 2" << std::endl;
 }
 
 void Mesh::exportOBJ(std::string filename)
