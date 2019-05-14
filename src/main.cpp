@@ -9,7 +9,7 @@ int main(int argc, char const *argv[])
 
     if(argc == 2)
     {
-        mesh.importOFF(argv[1]);
+        mesh.importOBJ(argv[1]);
         //mesh.dissolveEdge(mesh.edges()[4]);
         //mesh.dissolveEdge(mesh.edges()[0]);
         mesh.skeletonization();
