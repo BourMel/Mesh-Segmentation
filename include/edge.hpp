@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <ostream>
+#include <glm/vec3.hpp>
 
 class Face;
 class Vertex;
@@ -58,6 +59,8 @@ class Edge
     void addFace(Face *face);
     void removeFace(Face *face);
     void addFaceATL(Face *face);
+
+	glm::vec3 getNormal();
 
     //getter
     int id() const;
