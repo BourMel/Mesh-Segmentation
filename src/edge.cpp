@@ -119,7 +119,7 @@ void Edge::computeArea() {
 
       // Heron's formula
       currentArea = (a + b + c)*(-a + b + c)*(a - b + c)*(a + b -c);
-      currentArea = sqrt(currentArea)/4;
+      currentArea = sqrt(currentArea)/4.0f;
 
       totalArea += currentArea;
     }
