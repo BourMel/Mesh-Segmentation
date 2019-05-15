@@ -4,3 +4,4 @@ build
 bin
 *.user
 out.obj
+*.autosave
