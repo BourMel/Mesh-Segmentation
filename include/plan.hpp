@@ -2,6 +2,7 @@
 #define PLAN_H
 
 #include <glm/vec3.hpp>
+#include <glm/glm.hpp>
 
 class Plan
 {
@@ -13,6 +14,9 @@ class Plan
 
 		void point(glm::vec3 p);
 		void vecNorm(glm::vec3 v);
+
+		void nextPoint();
+		int relativePostion(glm::vec3 v);
 	private:
 		glm::vec3 m_point;
 		glm::vec3 m_vecteurNormale;

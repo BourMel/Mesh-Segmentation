@@ -153,6 +153,10 @@ void Edge::computeCost()
     }
 }
 
+glm::vec3 Edge::getNormal() {
+	return glm::normalize(m_v1->pos()-m_v2->pos());
+}
+
 //getter
 int Edge::id() const {return m_id;}
 Vertex *Edge::v1() const { return m_v1; }
