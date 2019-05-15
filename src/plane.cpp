@@ -1,31 +1,31 @@
-#include "plan.hpp"
+#include "plane.hpp"
 
-Plan::Plan(glm::vec3 p, glm::vec3 v) {
+Plane::Plane(glm::vec3 p, glm::vec3 v) {
 	m_point = p;
 	m_vecteurNormale = v;
 }
 
-glm::vec3 Plan::point() {
+glm::vec3 Plane::point() {
 	return m_point;
 }
 
-glm::vec3 Plan::vecNorm(){
+glm::vec3 Plane::vecNorm(){
 	return m_vecteurNormale;
 }
 
-void Plan::point(glm::vec3 p){
+void Plane::point(glm::vec3 p){
 	m_point = p;
 }
 
-void Plan::vecNorm(glm::vec3 v){
+void Plane::vecNorm(glm::vec3 v){
 	m_vecteurNormale = v;
 }
 
-void Plan::nextPoint(){
+void Plane::nextPoint(){
 	m_point += m_vecteurNormale;
 }
 
-int Plan::relativePostion(glm::vec3 v){
+int Plane::relativePosition(glm::vec3 v){
 	float dotProduct = glm::dot(m_point-v, m_vecteurNormale);
 	if(dotProduct < -0.001)
 		return -1;
