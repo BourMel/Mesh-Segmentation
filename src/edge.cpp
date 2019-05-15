@@ -162,6 +162,7 @@ std::vector<Face*> &Edge::ATL() { return m_ATL; }
 Edge::EdgeType Edge::type() const { return m_type; }
 float Edge::cost() const { return m_cost; }
 bool Edge::isLocked() const {return m_isLocked;}
+float Edge::area() const{return m_area;}
 
 // setter
 void Edge::v1(Vertex *v1) { m_v1 = v1; computeCost();}

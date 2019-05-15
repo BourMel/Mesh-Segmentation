@@ -67,6 +67,7 @@ class Edge
     std::vector<Face *> &ATL();
     EdgeType type() const;
     bool isLocked() const;
+    float area() const;
 
     // setter
     void v1(Vertex *v1);
