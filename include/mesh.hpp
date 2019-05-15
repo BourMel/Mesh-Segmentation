@@ -116,7 +116,7 @@ class Mesh
     std::map<std::pair<int, int>, Edge *> m_edge_map;
     std::vector<Vertex *> m_vertices;
 
-    std::vector<Edge *> m_bone_edge;
+    std::vector<Edge *> m_bones;
     std::vector<Vertex *> m_bone_vertices;
     int m_nbBV;
 };
