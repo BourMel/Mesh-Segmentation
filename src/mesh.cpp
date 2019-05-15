@@ -5,6 +5,7 @@
 #include "face.hpp"
 #include "utils.hpp"
 #include "output.hpp"
+#include "plane.hpp"
 
 #include <iostream>
 #include <string>
@@ -70,7 +71,142 @@ void Mesh::skeletonization()
     debug();
 }
 
-void Mesh::segmentation() {}
+void Mesh::segmentation() {
+  Plane *sweepPlane;
+  std::vector<Edge*> candidates;
+  Mesh *crossSection;
+
+  // some operations made only after a given number of iterations
+  int countIterations = 0;
+  // 5 last values of F (area or perimeter of the cross section)
+  float F1 = 0.0f;
+  float F2 = 0.0f;
+  float F3 = 0.0f;
+  float F4 = 0.0f;
+  float F5 = 0.0f;
+
+  // dérivations
+  float d1 = 0.0f;
+  float d2 = 0.0f;
+  float previousD3 = 0.0f;
+  float currentD3 = 0.0f;
+  float nextD3 = 0.0f;
+
+  // H : nb of simple polygons in the cross section
+  int currentH = 0;
+  int previousH = 0;
+  float perimeter;
+
+  int topology;
+
+  std::vector<Mesh *> components;
+  Mesh* currentComponent;
+
+  for(unsigned int i=0; i<m_bones.size(); i++) {
+    m_bones[i]->computeArea();
+  }
+
+  // order bones
+  std::sort(m_bones.begin(), m_bones.end(), Edge::compEdgePtrArea);
+
+  for(unsigned int i=0; i<m_bones.size(); i++){
+    sweepPlane = new Plane(m_bones[i]->v1()->pos(), m_bones[i]->getNormal());
+
+    // TODO : search for less candidates to the intersection
+    candidates = m_edges;
+
+    // intersections between sweepPlane and original mesh : edges
+    for(unsigned int j=0; j<candidates.size(); j++) {
+        int position1 = sweepPlane->relativePosition(candidates[j]->v1()->pos());
+        int position2 = sweepPlane->relativePosition(candidates[j]->v2()->pos());
+
+        if((position1 < 0 && position2 > 0) || (position1 > 0 && position2 < 0)) {
+            // crossSection->edges().push_back(candidates[j]);
+        }
+    }
+    // intersections : faces
+    for(unsigned int j=0; j<m_faces.size(); j++) {
+        for(unsigned int k=0; m_faces[j]->edges().size(); k++) {
+            // if one of the edges of the face is intersecting the cross section
+            if(std::find(crossSection->edges().begin(), crossSection->edges().end(),
+                m_faces[i]->edges()[j]) != crossSection->edges().end()) {
+                
+                // the face is intersecting the cross section
+                // crossSection->faces().push_back(m_faces[j]);
+            }
+        }
+    }
+
+    // get the polygons of the cross section = faces construction
+    crossSection->constructFaces();
+
+    // perimeter : we suppose the polygons are simple
+    for(unsigned int i=0; i<crossSection->faces().size(); i++) {
+        for(int j=0; j<crossSection->faces()[i]->edges().size(); j++) {
+            perimeter += std::sqrt(crossSection->faces()[i]->edges()[j]->cost());
+        }
+    }
+
+    F1 = F2;
+    F2 = F3;
+    F3 = F4;
+    F5 = perimeter;
+
+    previousD3 = currentD3;
+    currentD3 = nextD3;
+
+    if(countIterations >= 2) {
+      // compute the first derivative (with 2 values)
+      // d1 = changeRate(F5, F4);
+    }
+
+    if(countIterations >= 3) {
+      // compute the second derivative (change rate of 2 first derivatives = 3 values)
+      // d2 = changeRate(d1, changeRate(F4, F3));
+    }
+
+    if(countIterations >= 5) {
+      // compute the third derivative (change rate of 2 second derivatives = 5 values)
+      
+      // nextD3 = changeRate(
+      //   d2,
+      //   changeRate(
+      //     changeRate(F3, F2),
+      //     changeRate(F2, F1)
+      //   )
+      // );
+    }
+
+    previousH = currentH;
+    currentH = 0;
+
+    // get H (number of simple polygons in the cross section)
+    for(unsigned int j=0; j<crossSection->faces().size(); j++) {
+      if(crossSection->faces()[j]->isSimple()) {
+        currentH++;
+      }
+    }
+
+    if(currentH != previousH) {
+      topology = 0;
+    }
+    else {
+      topology = 1;
+    }
+
+    if(countIterations >= 7) {
+      if(topology == 0 || (currentD3 == 0 && (currentD3*nextD3 < 0))) {
+        // TODO : récupérer les triangles parcourus
+        components.push_back(currentComponent);
+      }
+    }
+
+    sweepPlane->nextPoint();
+  }
+
+
+  delete sweepPlane;
+}
 
 // edge: the edge to collapse
 void Mesh::dissolveEdge(Edge *edge)

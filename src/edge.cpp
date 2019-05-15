@@ -113,13 +113,13 @@ void Edge::computeArea() {
       currentArea = 0.0f;
 
       // we get the length of each edge of the face (triangle)
-      a = sqrt(m_ATL[i]->edges()[0]->cost());
-      b = sqrt(m_ATL[i]->edges()[1]->cost());
-      c = sqrt(m_ATL[i]->edges()[2]->cost());
+      a = std::sqrt(m_ATL[i]->edges()[0]->cost());
+      b = std::sqrt(m_ATL[i]->edges()[1]->cost());
+      c = std::sqrt(m_ATL[i]->edges()[2]->cost());
 
       // Heron's formula
       currentArea = (a + b + c)*(-a + b + c)*(a - b + c)*(a + b -c);
-      currentArea = sqrt(currentArea)/4.0f;
+      currentArea = std::sqrt(currentArea)/4;
 
       totalArea += currentArea;
     }

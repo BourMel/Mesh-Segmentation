@@ -82,9 +82,12 @@ class Edge
     friend std::ostream &operator<<(std::ostream &o, Edge &e);
 
     static bool compEdgePtr(Edge *a, Edge *b) {return a->m_cost < b->m_cost;}
+    static bool compEdgePtrArea(Edge *a, Edge *b) {return a->m_area < b->m_area;}
+
     bool operator< (const Edge &other) const {
         return m_cost < other.m_cost;
     }
+
 
   private:
     void init();

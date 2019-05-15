@@ -9,12 +9,13 @@ int main(int argc, char const *argv[])
 
     if(argc == 2)
     {
-        mesh.importOBJ(argv[1]);
+        mesh.importOFF(argv[1]);
         //mesh.dissolveEdge(mesh.edges()[4]);
         //mesh.dissolveEdge(mesh.edges()[0]);
         mesh.skeletonization();
-        mesh.exportOBJ("out.obj");
+        mesh.segmentation();
+        // mesh.exportOBJ("out.obj");
     }
-    
+
     return 0;
 }
