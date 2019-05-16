@@ -3,15 +3,37 @@
 #include "mesh.hpp"
 #include "edge.hpp"
 
+std::string getFileExt(const std::string& s) {
+
+   size_t i = s.rfind('.', s.length());
+   if (i != std::string::npos) {
+      return(s.substr(i+1, s.length() - i));
+   }
+
+   return("");
+}
+
 int main(int argc, char const *argv[])
 {
     Mesh mesh;
 
     if(argc == 2)
     {
-        mesh.importOFF(argv[1]);
-        //mesh.dissolveEdge(mesh.edges()[4]);
-        //mesh.dissolveEdge(mesh.edges()[0]);
+        std::string ext = getFileExt(argv[1]);
+        std::cout << ext << std::endl;
+        if(ext == "obj" || ext == "OBJ")
+        {
+            mesh.importOBJ(argv[1]);
+        }
+        else if(ext == "off" || ext == "OFF")
+        {
+            mesh.importOFF(argv[1]);
+        }
+        else
+        {
+            std::cout << "File extension unknown!" << std::endl;
+            return 0;
+        }
         mesh.skeletonization();
         mesh.segmentation();
         // mesh.exportOBJ("out.obj");

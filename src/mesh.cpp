@@ -63,7 +63,7 @@ void Mesh::skeletonization()
         }
         else
         {
-            std::cout << "\r" << static_cast<float>(m_nbBV)/static_cast<float>(m_edges.size())<<std::flush;
+            std::cout << "\r" << static_cast<float>(m_edges.size())<<std::flush;
             //std::cout << m_nbBV << std::endl;
         }
     }
@@ -653,11 +653,11 @@ void Mesh::importOBJ(std::string filename)
         }
         else if(type == "o") // new object (with name) :: UNSUPPORTED
         {
-
+            // pass
         }
         else if(type == "#") // comment
         {
-            //pass
+            // pass
         }
         else if(type == "s")
         {
