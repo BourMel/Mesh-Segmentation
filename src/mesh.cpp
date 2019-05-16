@@ -74,7 +74,7 @@ void Mesh::skeletonization()
 void Mesh::segmentation() {
   Plane *sweepPlane;
   std::vector<Edge*> candidates;
-  Mesh *crossSection;
+  Mesh *crossSection = new Mesh();
 
   // some operations made only after a given number of iterations
   int countIterations = 0;
@@ -121,7 +121,7 @@ void Mesh::segmentation() {
         int position2 = sweepPlane->relativePosition(candidates[j]->v2()->pos());
 
         if((position1 < 0 && position2 > 0) || (position1 > 0 && position2 < 0)) {
-            // crossSection->edges().push_back(candidates[j]);
+            crossSection->addEdge(candidates[j]);
         }
     }
     // intersections : faces
@@ -132,7 +132,7 @@ void Mesh::segmentation() {
                 m_faces[i]->edges()[j]) != crossSection->edges().end()) {
                 
                 // the face is intersecting the cross section
-                // crossSection->faces().push_back(m_faces[j]);
+                crossSection->addFace(m_faces[j]);
             }
         }
     }
@@ -142,7 +142,7 @@ void Mesh::segmentation() {
 
     // perimeter : we suppose the polygons are simple
     for(unsigned int i=0; i<crossSection->faces().size(); i++) {
-        for(int j=0; j<crossSection->faces()[i]->edges().size(); j++) {
+        for(unsigned int j=0; j<crossSection->faces()[i]->edges().size(); j++) {
             perimeter += std::sqrt(crossSection->faces()[i]->edges()[j]->cost());
         }
     }
@@ -150,6 +150,7 @@ void Mesh::segmentation() {
     F1 = F2;
     F2 = F3;
     F3 = F4;
+    F4 = F5;
     F5 = perimeter;
 
     previousD3 = currentD3;
@@ -157,24 +158,24 @@ void Mesh::segmentation() {
 
     if(countIterations >= 2) {
       // compute the first derivative (with 2 values)
-      // d1 = changeRate(F5, F4);
+      d1 = changeRate(F5, F4);
     }
 
     if(countIterations >= 3) {
       // compute the second derivative (change rate of 2 first derivatives = 3 values)
-      // d2 = changeRate(d1, changeRate(F4, F3));
+      d2 = changeRate(d1, changeRate(F4, F3));
     }
 
     if(countIterations >= 5) {
       // compute the third derivative (change rate of 2 second derivatives = 5 values)
       
-      // nextD3 = changeRate(
-      //   d2,
-      //   changeRate(
-      //     changeRate(F3, F2),
-      //     changeRate(F2, F1)
-      //   )
-      // );
+      nextD3 = changeRate(
+        d2,
+        changeRate(
+          changeRate(F3, F2),
+          changeRate(F2, F1)
+        )
+      );
     }
 
     previousH = currentH;
@@ -195,7 +196,7 @@ void Mesh::segmentation() {
     }
 
     if(countIterations >= 7) {
-      if(topology == 0 || (currentD3 == 0 && (currentD3*nextD3 < 0))) {
+      if(topology == 0 || (currentD3 == 0 && (previousD3*nextD3 < 0))) {
         // TODO : récupérer les triangles parcourus
         components.push_back(currentComponent);
       }
@@ -206,6 +207,7 @@ void Mesh::segmentation() {
 
 
   delete sweepPlane;
+  delete crossSection;
 }
 
 // edge: the edge to collapse
@@ -860,6 +862,14 @@ void Mesh::deleteFace(Face* face) {
     faceInMesh = std::find(m_faces.begin(), m_faces.end(), face);
     index = std::distance(m_faces.begin(), faceInMesh);
     m_faces.erase(m_faces.begin() + index);
+}
+
+void Mesh::addEdge(Edge* e) {
+  m_edges.push_back(e);
+}
+
+void Mesh::addFace(Face* f) {
+  m_faces.push_back(f);
 }
 
 void Mesh::debug() const

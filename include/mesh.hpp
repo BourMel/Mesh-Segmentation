@@ -71,6 +71,20 @@ class Mesh
     * @author Méline BL
     */
     void deleteFace(Face* face);
+    
+    /**
+    * @brief Adds an edge to the mesh
+    * @param edge : pointer
+    * @author Méline BL & Morgane R.
+    */
+    void addEdge(Edge* e);
+    /**
+    * @brief Adds a face to the mesh
+    * @param face : pointer
+    * @author Méline BL & Morgane R.
+    */
+    void addFace(Face* f);
+
     /**
     * @brief Construct faces of a polygon with its edges only
     * @author Méline BL

@@ -87,3 +87,7 @@ Face *faceInCommon(Edge *e1, Edge *e2)
     }
     return nullptr;
 }
+
+float changeRate(float a, float b) {
+    return b-a;
+}

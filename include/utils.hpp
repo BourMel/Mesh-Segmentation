@@ -74,6 +74,13 @@ void mergeSort(std::vector<Edge *> &e, int l, int r);
  */
 Face *faceInCommon(Edge *e1, Edge *e2);
 
+/**
+ * \brief Compute the change rate of 2 values (~ derivative) 
+ * \author Méline BL & Morgane R.
+ * \return change rate as a float
+ */
+float changeRate(float a, float b);
+
 template<typename T>
 typename std::vector<T>::const_iterator find(std::vector<T> const &v, T e)
 {
