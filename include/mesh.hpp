@@ -41,16 +41,6 @@ class Mesh
     void exportOBJ(std::string filename);
 
     /**
-     * @brief Export mesh to Obj file
-     *
-     * @param filename The path to the file
-     * @param meshes Meshes to export
-     * @author Tiphaine R.
-     */
-    void exportMesh(std::string filename, std::vector<Mesh *> meshes);
-
-
-    /**
     * @brief Delete edges present in both lists (because they link
     * the 2 same vertices) and delete the flattened faces
     *

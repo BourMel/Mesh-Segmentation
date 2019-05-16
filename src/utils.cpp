@@ -91,3 +91,66 @@ Face *faceInCommon(Edge *e1, Edge *e2)
 float changeRate(float a, float b) {
     return b-a;
 }
+
+
+void exportMesh(std::string filename, std::vector<Mesh *> meshes) {
+    std::ofstream file;
+    glm::vec3 v1 = glm::vec3();
+    glm::vec3 v2 = glm::vec3();
+    std::vector<Face*> faces;
+    std::vector<Edge*> edges;
+    int m =  meshes.size();
+    int f, e;
+    int i, j, k, l;
+    int c;
+
+    file.open(filename);
+    if (!file.is_open())
+    {
+        std::cerr << "Unable to open file: " << filename << std::endl;
+        return;
+    }
+
+    for (i = 0; i < m; i++)
+    {
+        //get faces of the current mesh
+        faces = meshes[i]->faces();
+        f = faces.size();
+        
+        file << "newmtl color" << m << std::endl;
+        file << "Kd " << static_cast <float> (rand()) / static_cast <float> (RAND_MAX) ;
+        file << " " << static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+        file << " " << static_cast <float> (rand()) / static_cast <float> (RAND_MAX) << std::endl;
+        
+        file << "g group" << m << std::endl;
+        file << "usemtl color" << m << std::endl;
+
+        for(j = 0; j < f; j++)
+        {
+            //get edges of the current face
+            edges = faces[j]->edges();
+            e = edges.size();
+
+            for(k = 0; k< e; k++)
+            {
+                //add vertices to the file
+                v1 = edges[i]->v1()->pos();
+                v2 = edges[i]->v2()->pos();
+
+                file << "v " << v1.x << " " << v1.y << " " << v1.z << std::endl;
+                file << "v " << v2.x << " " << v2.y << " " << v2.z << std::endl;
+            }
+
+            //offset
+            c = j*(2*e+2) + m*(f*(2*e+2));
+
+            //add faces to the file
+            file << "f ";
+            for(l = c; l < 2*k+2 + c; i++)
+                file << l << " ";
+
+        }
+        file << std::endl;
+    }
+    file.close();
+}

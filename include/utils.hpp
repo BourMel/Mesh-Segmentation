@@ -1,9 +1,11 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <iostream>
 #include <vector>
 #include <algorithm>
 #include "edge.hpp"
+#include "mesh.hpp"
 
 /**
  * @brief Concatenate two vectors and produce a new one
@@ -20,6 +22,15 @@ std::vector<T> mergeVector(const std::vector<T> &A, const std::vector<T> &B)
 
     return C;
 }
+
+/**
+ * @brief Export mesh to Obj file
+ *
+ * @param filename The path to the file
+ * @param meshes Meshes to export
+ * @author Tiphaine R.
+ */
+void exportMesh(std::string filename, std::vector<Mesh *> meshes);
 
 /**
  * @brief Apply bubble sort (ascending) to the vector \c v
