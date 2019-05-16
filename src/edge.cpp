@@ -169,8 +169,33 @@ bool Edge::isLocked() const {return m_isLocked;}
 float Edge::area() const{return m_area;}
 
 // setter
-void Edge::v1(Vertex *v1) { m_v1 = v1; computeCost();}
-void Edge::v2(Vertex *v2) { m_v2 = v2; computeCost();}
+void Edge::v1(Vertex *v1)
+{
+    if(v1->id() <= m_v2->id())
+    {
+        m_v1 = v1;
+    }
+    else
+    {
+        m_v1 = m_v2;
+        m_v2 = v1;
+    }
+    computeCost();
+}
+
+void Edge::v2(Vertex *v2)
+{
+    if(v2->id() >= m_v1->id())
+    {
+        m_v2 = v2;
+    }
+    else
+    {
+        m_v2 = m_v1;
+        m_v1 = v2;
+    }
+    computeCost();
+}
 void Edge::type(EdgeType type) { m_type = type; }
 void Edge::isLocked(bool b) { m_isLocked = b; }
 
