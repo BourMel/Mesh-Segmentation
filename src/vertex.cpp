@@ -53,6 +53,7 @@ void Vertex::lock(bool l)
         if(e->v1()->locked() && e->v2()->locked())
         {
             e->isLocked(true);
+            e->type(Edge::BONE);
         }
     }
 }
@@ -65,6 +66,8 @@ void Vertex::addEdge(Edge *e)
 void Vertex::removeEdge(Edge *e)
 {
     m_edges.erase(find(m_edges,e));
+    if(m_edges.size()<=1)
+        lock(true);
 }
 
 void Vertex::exportId(unsigned int id)
