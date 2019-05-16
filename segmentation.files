@@ -7,5 +7,6 @@ src/edge.cpp
 src/face.cpp
 src/main.cpp
 src/mesh.cpp
+src/skeletonization.cpp
 src/utils.cpp
 src/vertex.cpp
