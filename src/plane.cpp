@@ -32,5 +32,5 @@ int Plane::relativePosition(glm::vec3 v){
 	else if(dotProduct > 0.001)
 		return 1;
 	else
-		return 1;
+		return 0;
 }

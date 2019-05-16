@@ -91,7 +91,15 @@ class Mesh
     */
     void constructFaces();
 
+    /**
+     * @brief skeletonization of a mesh
+     * @author Nathan R.
+     */
     void skeletonization();
+    /**
+     * @brief segmentation of a mesh, using its skeleton
+     * @author Méline BL & Morgane R.
+     */
     void segmentation();
 
     void dissolveEdge(Edge* edge);

@@ -141,6 +141,15 @@ void Edge::addFaceATL(Face *face)
     m_ATL.push_back(face);
 }
 
+void Edge::removeFaceATL(Face *face) {
+    int index;
+    std::vector<Face*>::iterator faceInATL;
+
+    faceInATL = std::find(m_ATL.begin(), m_ATL.end(), face);
+    index = std::distance(m_ATL.begin(), faceInATL);
+    m_ATL.erase(m_ATL.begin() + index);
+}
+
 void Edge::computeCost()
 {
     if(m_v1 != nullptr && m_v2 != nullptr)
@@ -154,7 +163,7 @@ void Edge::computeCost()
 }
 
 glm::vec3 Edge::getNormal() {
-	return glm::normalize(m_v1->pos()-m_v2->pos());
+	return glm::normalize(m_v2->pos() - m_v1->pos());
 }
 
 //getter

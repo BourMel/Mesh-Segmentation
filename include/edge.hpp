@@ -60,6 +60,12 @@ class Edge
     void removeFace(Face *face);
     void addFaceATL(Face *face);
 
+    /**
+     * @brief Remove an ATL triangle from the bone
+     * @author Méline BL & Morgane R.
+     */
+    void removeFaceATL(Face *face);
+
 	glm::vec3 getNormal();
 
     //getter

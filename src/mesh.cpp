@@ -103,36 +103,37 @@ void Mesh::segmentation() {
   Mesh* currentComponent;
 
   for(unsigned int i=0; i<m_bones.size(); i++) {
-    m_bones[i]->computeArea();
+    m_bones.at(i)->computeArea();
   }
 
   // order bones
   std::sort(m_bones.begin(), m_bones.end(), Edge::compEdgePtrArea);
 
   for(unsigned int i=0; i<m_bones.size(); i++){
-    sweepPlane = new Plane(m_bones[i]->v1()->pos(), m_bones[i]->getNormal());
+    // get the point V1 and the vector (V1,V2)
+    sweepPlane = new Plane(m_bones.at(i)->v1()->pos(), m_bones.at(i)->getNormal());
 
-    // TODO : search for less candidates to the intersection
+    // TODO : search for less candidates to the intersection (= ATL of the bone ?)
     candidates = m_edges;
 
     // intersections between sweepPlane and original mesh : edges
     for(unsigned int j=0; j<candidates.size(); j++) {
-        int position1 = sweepPlane->relativePosition(candidates[j]->v1()->pos());
-        int position2 = sweepPlane->relativePosition(candidates[j]->v2()->pos());
+        int position1 = sweepPlane->relativePosition(candidates.at(j)->v1()->pos());
+        int position2 = sweepPlane->relativePosition(candidates.at(j)->v2()->pos());
 
         if((position1 < 0 && position2 > 0) || (position1 > 0 && position2 < 0)) {
-            crossSection->addEdge(candidates[j]);
+            crossSection->addEdge(candidates.at(j));
         }
     }
     // intersections : faces
     for(unsigned int j=0; j<m_faces.size(); j++) {
-        for(unsigned int k=0; m_faces[j]->edges().size(); k++) {
+        for(unsigned int k=0; m_faces.at(j)->edges().size(); k++) {
             // if one of the edges of the face is intersecting the cross section
             if(std::find(crossSection->edges().begin(), crossSection->edges().end(),
-                m_faces[i]->edges()[j]) != crossSection->edges().end()) {
+                m_faces.at(i)->edges().at(j)) != crossSection->edges().end()) {
                 
                 // the face is intersecting the cross section
-                crossSection->addFace(m_faces[j]);
+                crossSection->addFace(m_faces.at(j));
             }
         }
     }
@@ -142,8 +143,8 @@ void Mesh::segmentation() {
 
     // perimeter : we suppose the polygons are simple
     for(unsigned int i=0; i<crossSection->faces().size(); i++) {
-        for(unsigned int j=0; j<crossSection->faces()[i]->edges().size(); j++) {
-            perimeter += std::sqrt(crossSection->faces()[i]->edges()[j]->cost());
+        for(unsigned int j=0; j<crossSection->faces().at(i)->edges().size(); j++) {
+            perimeter += std::sqrt(crossSection->faces().at(i)->edges().at(j)->cost());
         }
     }
 
@@ -183,7 +184,7 @@ void Mesh::segmentation() {
 
     // get H (number of simple polygons in the cross section)
     for(unsigned int j=0; j<crossSection->faces().size(); j++) {
-      if(crossSection->faces()[j]->isSimple()) {
+      if(crossSection->faces().at(j)->isSimple()) {
         currentH++;
       }
     }
@@ -197,7 +198,25 @@ void Mesh::segmentation() {
 
     if(countIterations >= 7) {
       if(topology == 0 || (currentD3 == 0 && (previousD3*nextD3 < 0))) {
-        // TODO : récupérer les triangles parcourus
+        // get the previous triangles and count them as a component
+        
+        // we look for the triangles belonging to the bones (ATL)
+        for(unsigned int j=0; j<m_bones[i]->ATL().size(); j++) {
+          // we look at its edges
+          for(unsigned int k=0; k<m_bones[i]->ATL().at(j)->edges().size(); k++) {
+
+            // if one vertex is under the sweep plane, it is part of our new component
+            if(sweepPlane->relativePosition(m_bones.at(i)->ATL().at(j)->edges().at(k)->v1()->pos()) < 0) {
+              currentComponent->addFace(m_bones.at(i)->ATL().at(j));
+              // remove from ATL so it won't be considered in next components
+              m_bones.at(i)->removeFaceATL(m_bones.at(i)->ATL().at(j));
+              break;
+            }
+          }
+
+        }
+
+
         components.push_back(currentComponent);
       }
     }
