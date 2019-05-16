@@ -18,17 +18,19 @@ class Mesh
      * @brief Import OFF file
      *
      * @param filename The path to the file
+     * @return Error code
      * @author Nathan R.
      */
-    void importOFF(std::string filename);
+    int importOFF(std::string filename);
 
     /**
      * @brief Import OBJ file
      *
      * @param filename The path to the file
+     * @return Error code
      * @author Nathan R.
      */
-    void importOBJ(std::string filename);
+    int importOBJ(std::string filename);
 
     /**
      * @brief Export skeleton to Obj file

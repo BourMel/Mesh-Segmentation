@@ -30,7 +30,15 @@ void Mesh::skeletonization()
 
         while(i < m_edges.size())
         {
-            Edge *e = m_edges[i];
+            Edge *e = m_edges.at(i);
+            if(e)
+            {
+
+            }
+            else
+            {
+                std::cout << "null" << std::endl;
+            }
             if(e->type() == Edge::MESH)
             {
                 if(e->faces().size() > 0) // if an edge is connect to at least one face
@@ -54,7 +62,7 @@ void Mesh::skeletonization()
             {
                 //std::cout << "is bone, skip" << std::endl;
             }
-
+            debug();
             i++;
         }
         if(i >= m_edges.size()-1)
@@ -66,9 +74,10 @@ void Mesh::skeletonization()
             std::cout << "\r" << static_cast<float>(m_edges.size())<<std::flush;
             //std::cout << m_nbBV << std::endl;
         }
+        debug();
     }
     std::cout << std::endl;
-    debug();
+
 }
 
 void Mesh::segmentation() {
@@ -213,15 +222,20 @@ void Mesh::dissolveEdge(Edge *edge)
 {
     Vertex *mean = edge->getMeanPosition(); // the mean position on the edge
     m_vertices.push_back(mean);
-    //std::cout << "trying to collapse " << *edge << " @ " << glm::to_string(mean->pos()) << std::endl;
+    std::cout << "trying to collapse " << *edge << " @ " << glm::to_string(mean->pos()) << std::endl;
 
     auto edges = edge->getConnectedEdges(); //   all the edges connected
-    //std::cout << edges.size() << " edges connected." << std::endl;
+    std::cout << edges.size() << " edges connected." << std::endl;
 
     for(Edge* e : edges)
     {
-        if(e->isLocked() == false)
+        if(e == edge)
         {
+            std::cout << "same edge" << std::endl;
+        }
+        else if(e->isLocked() == false)
+        {
+            std::cout << "edge is free: "<< *e << std::endl;
             if(e->v1() == edge->v1() || e->v1() == edge->v2()) // e.v1 is connected to edge
             {
                 e->v1()->edges().erase(find(e->v1()->edges(),e));
@@ -243,6 +257,7 @@ void Mesh::dissolveEdge(Edge *edge)
         }
         else // edge is locked so is bone
         {
+            std::cout <<"hit bone" << std::endl;
             Edge *ve = new Edge;
             if(e->v1() == edge->v1() || e->v1() == edge->v2()) // e.v1 is connected to edge
             {
@@ -281,9 +296,9 @@ void Mesh::dissolveEdge(Edge *edge)
                     // on la met en ATL à (*e1)
                     (*e1)->addFaceATL(f);
                     // si e2 était adjacent à une 2e face, l'ajouter à la liste de e1
-                    if((*e2)->faces()[0] != f)
+                    if((*e2)->faces().at(0) != f)
                     {
-                        (*e1)->addFace((*e2)->faces()[0]);
+                        (*e1)->addFace((*e2)->faces().at(0));
                     }
 
                     // on supprime e2 de la liste des edges de l'extremité qui n'est pas mean
@@ -295,7 +310,6 @@ void Mesh::dissolveEdge(Edge *edge)
                     {
                         (*e2)->v2()->removeEdge(*e2);
                     }
-
                 }
 
                 // si la face commune était la seule face adjacente aux deux edges, c'est mtn une BONE
@@ -419,7 +433,7 @@ void Mesh::constructFaces() {
     }
 }
 
-void Mesh::importOFF(std::string filename)
+int Mesh::importOFF(std::string filename)
 {
 
     std::ifstream file;   // input file
@@ -436,6 +450,7 @@ void Mesh::importOFF(std::string filename)
     if (!file.is_open())
     {
         std::cerr << "Unable to open file: " << filename << std::endl;
+        return 0;
     }
     else
     {
@@ -449,7 +464,7 @@ void Mesh::importOFF(std::string filename)
     if (!(ss.str() == "OFF"))
     {
         std::cerr << "file token is not OFF" << std::endl;
-        return;
+        return 0;
     }
 
     std::getline(file, line);
@@ -476,7 +491,7 @@ void Mesh::importOFF(std::string filename)
         else
         {
             std::cout << "Wrong vertex format (at " << numLine << ")" << std::endl;
-            return;
+            return 0;
         }
     }
 
@@ -494,7 +509,7 @@ void Mesh::importOFF(std::string filename)
         if (!(iss >> nbv))
         {
             std::cerr << "Unable to read vertex count of face! (at " << numLine << ")" << std::endl;
-            return;
+            return 0;
         }
 
         // read indices of vertices connected to the face
@@ -508,7 +523,7 @@ void Mesh::importOFF(std::string filename)
             else
             {
                 std::cerr << "Unable to read vertex coordinate! (at " << numLine << ")" << std::endl;
-                return;
+                return 0;
             }
         }
 
@@ -552,9 +567,10 @@ void Mesh::importOFF(std::string filename)
     // put all element of map into a vector
     for(auto it = m_edge_map.begin(); it != m_edge_map.end() ; ++it)
         m_edges.push_back(it->second);
+    return 1;
 }
 
-void Mesh::importOBJ(std::string filename)
+int Mesh::importOBJ(std::string filename)
 {
     std::ifstream file;   // input file
     std::string line;     // current line
@@ -566,7 +582,7 @@ void Mesh::importOBJ(std::string filename)
     if (!file.is_open())
     {
         std::cerr << "Unable to open file: " << filename << std::endl;
-        return;
+        return 0;
     }
     else
     {
@@ -596,7 +612,7 @@ void Mesh::importOBJ(std::string filename)
             else
             {
                 std::cout << "Wrong vertex format (at " << numLine << ")" << std::endl;
-                return;
+                return 0;
             }
         }
         else if(type == "f") // face declaration
@@ -612,7 +628,7 @@ void Mesh::importOBJ(std::string filename)
                 else
                 {
                     std::cerr << "error" << std::endl;
-                    return;
+                    return 0;
                 }
             }
             Face *f = new Face;
@@ -669,6 +685,7 @@ void Mesh::importOBJ(std::string filename)
     // put all element of map into a vector
     for(auto it = m_edge_map.begin(); it != m_edge_map.end() ; ++it)
         m_edges.push_back(it->second);
+    return 1;
 }
 
 void Mesh::exportOBJ(std::string filename)
@@ -864,16 +881,19 @@ void Mesh::deleteFace(Face* face) {
 
 void Mesh::debug() const
 {
+    std::cout << "Vertices" << std::endl;
     for(auto v: m_vertices)
     {
-        std::cout << *v << std::endl;
+        std::cout << "v" << *v << std::endl;
     }
+    std::cout << "Edges" << std::endl;
     for(auto e: m_edges)
     {
-        std::cout << *e << std::endl;
+        std::cout << "e" << *e << std::endl;
     }
+    std::cout << "Faces" << std::endl;
     for(auto f: m_faces)
     {
-        std::cout << *f << std::endl;
+        std::cout << "f" << *f << std::endl;
     }
 }
