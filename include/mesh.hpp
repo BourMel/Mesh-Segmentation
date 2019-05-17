@@ -95,6 +95,7 @@ class Mesh
     void segmentation();
 
     void dissolveEdge(Edge* edge);
+    void dissolveEdge2(Edge* edge);
 
     const std::vector<Face *> &faces() { return m_faces; }
     const std::vector<Edge *> &edges() { return m_edges; }

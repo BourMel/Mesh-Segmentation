@@ -30,8 +30,16 @@ void Mesh::skeletonization()
                     if(e->faces().size() > 0) // if an edge is connect to at least one face, we can collapse it
                     {
                         dissolveEdge(e);
-                        //if(e->v1()->locked() == false) {m_vertices.erase(find(m_vertices,e->v1()));}
-                        //if(e->v2()->locked() == false) {m_vertices.erase(find(m_vertices,e->v2()));}
+                        if(e->v1()->locked() == false)
+                        {
+                            m_vertices.erase(find(m_vertices,e->v1()));
+                            delete e->v1();
+                        }
+                        if(e->v2()->locked() == false)
+                        {
+                            m_vertices.erase(find(m_vertices,e->v2()));
+                            delete e->v2();
+                        }
 
                         // remove the edge
                         m_edges.erase(find(m_edges,e));
@@ -50,7 +58,7 @@ void Mesh::skeletonization()
                 {
                     // is a bone or a virtual edge
                 }
-                debug();
+                //debug();
                 i++;
             }
             else
@@ -62,12 +70,10 @@ void Mesh::skeletonization()
         {
             stop = true;
         }
-        else
-        {
-            //std::cout << "\r" << static_cast<float>(m_edges.size())<<std::flush;
-            //std::cout << m_nbBV << std::endl;
-        }
-        debug();
+
+        //std::cout << "\r" << static_cast<float>(m_vertices.size())<<std::flush;
+        //std::cout << m_nbBV << std::endl;
+        //debug();
     }
     std::cout << std::endl;
 
@@ -79,11 +85,11 @@ void Mesh::dissolveEdge(Edge *edge)
     // add the mean to the list as new
     m_vertices.push_back(mean);
 
-    std::cout << "trying to collapse " << *edge << " @ " << glm::to_string(mean->pos()) << std::endl;
+    //std::cout << "trying to collapse " << *edge << " @ " << glm::to_string(mean->pos()) << std::endl;
 
     // all the edges connected to edge
     auto edges = edge->getConnectedEdges();
-    std::cout << edges.size() << " edges connected." << std::endl;
+    //std::cout << edges.size() << " edges connected." << std::endl;
 
     for(Edge* e : edges)
     {
@@ -93,7 +99,7 @@ void Mesh::dissolveEdge(Edge *edge)
         }
         else if(e->isLocked() == false)
         {
-            std::cout << "edge is free: "<< *e << std::endl;
+            //std::cout << "edge is free: "<< *e << std::endl;
             if(e->v1() == edge->v1() || e->v1() == edge->v2()) // e.v1 is connected to edge
             {
                 // on deconnect e.v1 de e
@@ -118,7 +124,7 @@ void Mesh::dissolveEdge(Edge *edge)
         }
         else // edge is locked so is bone
         {
-            std::cout <<"hit bone" << std::endl;
+            //std::cout <<"hit bone" << std::endl;
             Edge *ve = new Edge;
             if(e->v1() == edge->v1() || e->v1() == edge->v2()) // e.v1 is connected to edge
             {
@@ -138,7 +144,7 @@ void Mesh::dissolveEdge(Edge *edge)
             //std::cout << "new virtual edge:" << *ve << std::endl;
         }
     }
-    std::cout << "cleaning" << std::endl;
+    //std::cout << "cleaning" << std::endl;
 
     // all free edges are now connected to mean
     // go through all edges of mean to detect duplicates and update ATL
@@ -146,14 +152,14 @@ void Mesh::dissolveEdge(Edge *edge)
     {
         for(auto e2 = mean->edges().begin(); e2 != mean->edges().end(); e2++) // iterator
         {
-            std::cout << "test: " << *(*e1) << *(*e2) << std::endl;
+            //std::cout << "test: " << *(*e1) << *(*e2) << std::endl;
             // if two edges have same vertices and are not the same edge
             if(((*e1)->v1() == (*e2)->v1() && (*e1)->v2() == (*e2)->v2()) && ((*e1) != (*e2)))
             {
                 Face *f = faceInCommon(*e1, *e2);
                 if(f != nullptr)
                 {
-                    std::cout << "have a face in common" << std::endl;
+                    //std::cout << "have a face in common" << std::endl;
                     // on enlève la face commune de e1 et e2
                     (*e1)->removeFace(f);
                     (*e2)->removeFace(f);
@@ -161,7 +167,7 @@ void Mesh::dissolveEdge(Edge *edge)
                     // on la met en ATL à (*e1)
                     (*e1)->addFaceATL(f);
 
-                    std::cout << "1" << std::endl;
+                    //std::cout << "1" << std::endl;
 
                     // si e2 était adjacent à une 2e face, l'ajouter à la liste de e1
                     if((*e2)->faces().at(0) != f)
@@ -169,7 +175,7 @@ void Mesh::dissolveEdge(Edge *edge)
                         (*e1)->addFace((*e2)->faces().at(0));
                     }
 
-                    std::cout << "2" << std::endl;
+                    //std::cout << "2" << std::endl;
 
                     // si e2 avait une ATL non-vide
                     if((*e2)->ATL().size() > 0)
@@ -180,25 +186,23 @@ void Mesh::dissolveEdge(Edge *edge)
                         }
                     }
 
-                    std::cout << "3" << std::endl;
-
-                    //on supprime e2
-                    //(*e2)->v1()->removeEdge(*e2);
-                    //(*e2)->v2()->removeEdge(*e2);
+                    //std::cout << "3" << std::endl;
 
                     // on supprime e2 de la liste des edges de l'extremité qui n'est pas mean
                     if((*e2)->v1() != mean)
                     {
-                        std::cout << *((*e2)->v1()) << std::endl;
+                        //std::cout << *((*e2)->v1()) << std::endl;
                         (*e2)->v1()->removeEdge(*e2);
                     }
                     else
                     {
-                        std::cout << "b" << std::endl;
+                        //std::cout << "b" << std::endl;
                         (*e2)->v2()->removeEdge(*e2);
                     }
 
-                    std::cout << "4" << std::endl;
+                    //std::cout << "4" << std::endl;
+                    m_faces.erase(find(m_faces,f));
+                    delete f;
                 }
 
                 // si la face commune était la seule face adjacente aux deux edges, c'est mtn une BONE
@@ -211,13 +215,52 @@ void Mesh::dissolveEdge(Edge *edge)
                 }
 
                 // on supprime le doublon de la liste globale
-                std::cout << "remove doubled edge" << std::endl;
-                m_edges.erase(find(m_edges,*e2));
-                std::cout << "remove from mean" << std::endl;
+                auto it = find(m_edges,*e2);
+                if(it != m_edges.end())
+                    m_edges.erase(it);
+
                 // on supprime le doublon de la liste de mean
                 mean->edges().erase(e2);
                 break; // cannot have another match
             }
+        }
+    }
+}
+
+void Mesh::dissolveEdge2(Edge *edge)
+{
+    Vertex *mean = edge->getMeanPosition();
+    auto connectedEdges = edge->getConnectedEdges();
+    for(auto e: connectedEdges)
+    {
+        if(e->type() == Edge::MESH)
+        {
+            // on déplace le vertex de e connécté à edge
+
+            if(e->v1() == edge->v1() || e->v1() == edge->v2())
+            {
+                e->v1(mean);
+            }
+            else if(e->v2() == edge->v1() || e->v2() == edge->v2())
+            {
+                e->v2(mean);
+            }
+            mean->addEdge(e);
+        }
+        else // bone or virtual
+        {
+            // on créer une virtual entre mean et le vertex connecté
+
+            Edge *virtualEdge = new Edge;
+            if(e->v1() == edge->v1() || e->v1() == edge->v2())
+            {
+                virtualEdge->v1(e->v1());
+            }
+            else if(e->v2() == edge->v1() || e->v2() == edge->v2())
+            {
+                virtualEdge->v1(e->v2());
+            }
+            virtualEdge->v2(mean);
         }
     }
 }

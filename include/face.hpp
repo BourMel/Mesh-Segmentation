@@ -20,14 +20,14 @@ class Face
 
     std::vector<Edge*> &edges();
 
-    int id() const;
+    std::size_t id() const;
 
     //debug
     friend std::ostream &operator<<(std::ostream &o, Face &e);
 
   private:
     std::vector<Edge*> m_edges;
-    int m_id;
+    std::size_t m_id;
 };
 
 #endif

@@ -5,7 +5,7 @@
 
 Face::Face()
 {
-    static int id = 0;
+    static std::size_t id = 0;
 
     m_id = id++;
 }
@@ -38,7 +38,7 @@ std::vector<Edge *> &Face::edges()
     return m_edges;
 }
 
-int Face::id() const
+std::size_t Face::id() const
 {
     return m_id;
 }

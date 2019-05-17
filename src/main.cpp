@@ -45,6 +45,7 @@ int main(int argc, char const *argv[])
         else
         {
         mesh.skeletonization();
+        mesh.debug();
         //mesh.segmentation();
         // mesh.exportOBJ("out.obj");
         }
