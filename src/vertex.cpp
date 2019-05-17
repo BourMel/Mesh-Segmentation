@@ -65,7 +65,9 @@ void Vertex::addEdge(Edge *e)
 
 void Vertex::removeEdge(Edge *e)
 {
-    m_edges.erase(find(m_edges,e));
+    auto f = find(m_edges,e);
+    if(f != m_edges.end())
+        m_edges.erase(f);
     if(m_edges.size()<=1)
         lock(true);
 }
