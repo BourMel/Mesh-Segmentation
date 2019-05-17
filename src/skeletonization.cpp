@@ -170,7 +170,7 @@ void Mesh::dissolveEdge(Edge *edge)
                     //std::cout << "1" << std::endl;
 
                     // si e2 était adjacent à une 2e face, l'ajouter à la liste de e1
-                    if((*e2)->faces().at(0) != f)
+                    if((!((*e2)->faces().empty())) && ((*e2)->faces().at(0) != f))
                     {
                         (*e1)->addFace((*e2)->faces().at(0));
                     }

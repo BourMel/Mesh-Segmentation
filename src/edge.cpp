@@ -180,14 +180,18 @@ float Edge::area() const{return m_area;}
 // setter
 void Edge::v1(Vertex *v1)
 {
-    // we unsuscribe this edge from the old vertex
-    m_v1->edges().erase(find(m_v1->edges(),this));
-    if(v1->id() <= m_v2->id())
+	if((m_v1 == nullptr) || (m_v2 == nullptr)) {
+		m_v1 = v1;
+	}
+    else if(v1->id() <= m_v2->id())
     {
+		// we unsuscribe this edge from the old vertex
+		// m_v1->edges().erase(find(m_v1->edges(),this));
         m_v1 = v1;
     }
     else
     {
+		// m_v1->edges().erase(find(m_v1->edges(),this));
         m_v1 = m_v2;
         m_v2 = v1;
     }
@@ -196,13 +200,17 @@ void Edge::v1(Vertex *v1)
 
 void Edge::v2(Vertex *v2)
 {
-    m_v1->edges().erase(find(m_v1->edges(),this));
-    if(v2->id() >= m_v1->id())
+	if((m_v1 == nullptr) || (m_v2 == nullptr)) {
+		m_v2 = v2;
+	}
+	else if(v2->id() >= m_v1->id())
     {
+		// m_v2->edges().erase(find(m_v2->edges(),this));
         m_v2 = v2;
     }
     else
     {
+		// m_v2->edges().erase(find(m_v2->edges(),this));
         m_v2 = m_v1;
         m_v1 = v2;
     }
