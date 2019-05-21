@@ -79,6 +79,7 @@ int Mesh::importOBJ(std::string filename)
             if (iss >> x >> y >> z)
             {
                 m_vertices.push_back(new Vertex({x, y, z}));
+                m_raw_vertices.push_back({x,y,z});
             }
             else
             {
