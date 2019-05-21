@@ -29,10 +29,13 @@ public:
     void removeEdge(Edge *e);
     void removeVertex(Vertex *v);
 
+
     // getter
     const std::vector<Edge *> &edges() { return m_edges; }
-
+    std::vector<Face*> faces();
+    
     void debug();
+    int allFacesInATL();
 
 private:
 

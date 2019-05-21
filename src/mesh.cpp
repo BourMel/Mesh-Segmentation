@@ -154,7 +154,7 @@ int Mesh::importOBJ(std::string filename)
             std::cerr << "OBJ flag not handled:\"" << type << "\" (at "<<numLine<<")"<< std::endl;
         }
     }
-    std::cout << "Found " << m_vertices.size() << "vertices and " << m_faces.size() << " faces." << std::endl;
+    std::cout << "Found " << m_vertices.size() << " vertices and " << m_faces.size() << " faces." << std::endl;
 
     file.close();
 
@@ -295,7 +295,7 @@ int Mesh::importOFF(std::string filename)
         }
     }
     // end
-    std::cout << "Found " << m_vertices.size() << "vertices and " << m_faces.size() << " faces." << std::endl;
+    std::cout << "Found " << m_vertices.size() << " vertices and " << m_faces.size() << " faces." << std::endl;
 
     file.close();
 
@@ -370,4 +370,19 @@ void Mesh::debug()
     {
         std::cout << *f << std::endl;
     }*/
+}
+
+int Mesh::allFacesInATL() 
+{
+    int compteur = 0;
+    for(unsigned int i = 0; i < m_edges.size(); ++i)
+    {
+        compteur += m_edges.at(i)->ATL().size();
+    }
+    return compteur;
+}
+
+std::vector<Face*> Mesh::faces()
+{
+    return m_faces;
 }
