@@ -1,113 +1,63 @@
-#ifndef EDGE_H
-#define EDGE_H
+#ifndef EDGE_HPP
+#define EDGE_HPP
 
 #include <vector>
 #include <ostream>
-#include <glm/vec3.hpp>
+#include "utils.hpp"
 
-class Face;
 class Vertex;
+class Face;
 
 class Edge
 {
-  public:
+public:
     typedef enum
     {
         MESH,
-        BONE,
-        VIRTUAL
+        VIRTUAL,
+        BONE
     } EdgeType;
 
     Edge();
-    Edge(Vertex *first, Vertex *last);
+    Edge(Vertex *v1, Vertex *v2);
 
-    /**
-     * @brief The cost of an edge is defined by its length.
-     * We use squared length to optimize the process as
-     * we only need the cost to sort the edges.
-     *
-     * @return The edge's square length
-     */
-    float cost() const;
-
-    /*!
-	* \brief calculate the position of the middle of the edge and return this vertex
-	* \author Morgane R.
-	*/
+    std::vector<Edge *> getConnectedEdges();
     Vertex *getMeanPosition();
 
-    /**
-     * @brief Returns true if there's an intersection between 2 edges
-     * @author Méline BL
-     */
-    bool intersectWith(Edge* e);
+    void addFace(ID f);
+    void removeFace(ID f);
+    void addFaceATL(std::size_t id);
 
-    /**
-     * @brief Get the Connected Edges object
-     *
-     * @return std::vector<Edge*>
-     * @author Nathan R.
-     */
-    std::vector<Edge*> getConnectedEdges();
-
-    /**
-     * @brief Compute an edge's area (with ATL list) and save it in the object
-     * @author Méline BL
-     */
-    void computeArea();
-
-    void addFace(Face *face);
-    void removeFace(Face *face);
-    void addFaceATL(Face *face);
-
-    /**
-     * @brief Remove an ATL triangle from the bone
-     * @author Méline BL & Morgane R.
-     */
-    void removeFaceATL(Face *face);
-
-	glm::vec3 getNormal();
-
-    //getter
-    int id() const;
-    Vertex *v1() const;
-    Vertex *v2() const;
-    std::vector<Face *> &faces();
-    std::vector<Face *> &ATL();
-    EdgeType type() const;
-    bool isLocked() const;
-    float area() const;
-
-    // setter
     void v1(Vertex *v1);
     void v2(Vertex *v2);
     void type(EdgeType type);
-    void isLocked(bool b);
 
-    // debug
-    friend std::ostream &operator<<(std::ostream &o, Edge &e);
+    Vertex *v1() const;
+    Vertex *v2() const;
+    std::vector<ID> &faces();
+    std::vector<ID> &ATL();
+    EdgeType type() const;
+    float cost() const;
+    ID id() const;
 
-    static bool compEdgePtr(Edge *a, Edge *b) {return a->m_cost < b->m_cost;}
-    static bool compEdgePtrArea(Edge *a, Edge *b) {return a->m_area < b->m_area;}
+    static bool compEdgeId(Edge *a, Edge *b);
+    static bool compEdgeCost(Edge *a, Edge *b);
+    //static bool compEdgeArea(Edge *a, Edge *b);
 
-    bool operator< (const Edge &other) const {
-        return m_cost < other.m_cost;
-    }
+    friend std::ostream& operator<<(std::ostream &o, Edge &e);
 
-
-  private:
-    void init();
+private:
     void computeCost();
+    void init();
 
+    ID m_id;
     Vertex *m_v1, *m_v2;
-    std::vector<Face *> m_faces;
-    std::vector<Face *> m_ATL;
-
+    std::vector<ID> m_faces;
+    std::vector<ID> m_ATL;
     EdgeType m_type;
-    bool m_isLocked;
     float m_cost;
-    float m_area;
-    int m_id;
+
+    static ID m_gid;
 };
 
-#endif
+#endif // EDGE_HPP

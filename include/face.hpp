@@ -1,33 +1,34 @@
-#ifndef FACE_H
-#define FACE_H
+#ifndef FACE_HPP
+#define FACE_HPP
+
+#include "utils.hpp"
 
 #include <ostream>
 #include <vector>
+#include <map>
 
 class Edge;
+class Vertex;
 
 class Face
 {
-  public:
-    Face();
+public:
+    Face(ID a, ID b, ID c, float area);
 
-    void addEdge(Edge *e);
-    /**
-     * @brief Test if the face is a simple polygon (no intersection between edges)
-     * @author Méline BL
-     */
-    bool isSimple();
+    ID A() const;
+    ID B() const;
+    ID C() const;
+    float area() const;
+    ID id() const;
 
-    std::vector<Edge*> &edges();
+    friend std::ostream& operator<<(std::ostream &o, const Face &f);
 
-    std::size_t id() const;
+private:
+    ID m_A, m_B, m_C;
+    ID m_id;
+    float m_area;
 
-    //debug
-    friend std::ostream &operator<<(std::ostream &o, Face &e);
-
-  private:
-    std::vector<Edge*> m_edges;
-    std::size_t m_id;
+    static ID m_gid;
 };
 
-#endif
+#endif // FACE_HPP

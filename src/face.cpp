@@ -1,55 +1,24 @@
 #include "face.hpp"
-#include "edge.hpp"
 
-#include <sstream>
+ID Face::m_gid = 0;
 
-Face::Face()
+Face::Face(ID a, ID b, ID c, float area)
 {
-    static std::size_t id = 0;
+    m_A = a;
+    m_B = b;
+    m_C = c;
+    m_area = area;
 
-    m_id = id++;
+    m_id = m_gid++;
 }
 
-void Face::addEdge(Edge *e)
-{
-    m_edges.push_back(e);
-}
+ID Face::A() const{ return m_A; }
+ID Face::B() const{ return m_B; }
+ID Face::C() const{ return m_C; }
+float Face::area() const { return m_area; }
+ID Face::id() const { return m_id; }
 
-bool Face::isSimple()
+std::ostream& operator<<(std::ostream &o, const Face &f)
 {
-    bool isSimple = true;
-
-    // test each couple of edges
-    for (unsigned int i = 0; (i < m_edges.size() - 1) && isSimple; i++)
-    {
-        for (unsigned int j = i + 1; (j < m_edges.size()) && isSimple; j++)
-        {
-            if (m_edges[i]->intersectWith(m_edges[j]))
-            {
-                isSimple = false;
-            }
-        }
-    }
-    return isSimple;
-}
-
-std::vector<Edge *> &Face::edges()
-{
-    return m_edges;
-}
-
-std::size_t Face::id() const
-{
-    return m_id;
-}
-
-std::ostream &operator<<(std::ostream &o, Face &f)
-{
-    std::stringstream ss;
-    ss << f.id() << " ";
-    for (auto e : f.edges())
-    {
-        ss << *e;
-    }
-    return o << ss.str();
+    return o << "[v" << f.m_A << " v" << f.m_B << " v" << f.m_C << "]";
 }

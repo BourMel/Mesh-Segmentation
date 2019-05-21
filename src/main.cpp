@@ -1,55 +1,66 @@
 #include <iostream>
+#include <unistd.h>
 
 #include "mesh.hpp"
-#include "edge.hpp"
 
-std::string getFileExt(const std::string& s) {
-
-   size_t i = s.rfind('.', s.length());
-   if (i != std::string::npos) {
-      return(s.substr(i+1, s.length() - i));
-   }
-
-   return("");
-}
-
-int main(int argc, char const *argv[])
+int main(int argc, char *argv[])
 {
-    Mesh mesh;
-    bool fail = false;
+    Mesh *mesh = nullptr;
 
-    if(argc == 2)
-    {
-        std::string ext = getFileExt(argv[1]);
-        std::cout << ext << std::endl;
-        if(ext == "obj" || ext == "OBJ")
+        std::string in_filename;
+        std::string out_filename = "out.obj";
+        bool verbose = false;
+
+        int opt;
+        double step = 1.0;
+        while((opt = getopt(argc, argv, "s:o:v")) != -1)
         {
-            if(!mesh.importOBJ(argv[1]))
-                fail = true;
+            switch (opt) {
+            case 's':
+                step = atof(optarg);
+                break;
+            case 'o':
+                out_filename = optarg;
+                break;
+            case 'v':
+                verbose = true;
+                break;
+            default:
+                std::cerr << "Usage: " << argv[0] << "[-o oufile] [-s step] [-v] infile" << std::endl;
+                exit(EXIT_FAILURE);
+            }
         }
-        else if(ext == "off" || ext == "OFF")
+
+        if(optind >= argc)
         {
-            if(!mesh.importOFF(argv[1]))
-                fail = true;
+            std::cerr << "Expected arguments after options" << std::endl;
+            std::cerr << "Usage: " << argv[0] << "[-o oufile] [-s step] [-v] infile" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+
+        in_filename = argv[optind];
+
+        try {
+            mesh = new Mesh(in_filename);
+        } catch (const char* e) {
+            std::cerr << e << std::endl;
+            if(mesh != nullptr)
+                delete mesh;
+            exit(EXIT_FAILURE);
+        }
+        if(mesh)
+        {
+            mesh->skeletonization();
+            mesh->debug();
+            //mesh->segmentation(step);
+            mesh->exportOBJ(out_filename);
+
+            delete mesh;
         }
         else
         {
-            std::cout << "File extension unknown!" << std::endl;
-            return 0;
+            std::cerr << "Failed to initilialize mesh" <<std::endl;
+            exit(EXIT_FAILURE);
         }
-
-        if(fail)
-        {
-            return 0;
-        }
-        else
-        {
-        mesh.skeletonization();
-        mesh.debug();
-        //mesh.segmentation();
-        // mesh.exportOBJ("out.obj");
-        }
-    }
-
-    return 0;
+        exit(EXIT_SUCCESS);
 }
