@@ -43,7 +43,6 @@ int main(int argc, char *argv[])
 
     try {
         mesh = new Mesh(in_filename);
-        Mesh::resetId();
         initial = new Mesh(in_filename);
     } catch (const char* e) {
         std::cerr << e << std::endl;
@@ -57,7 +56,7 @@ int main(int argc, char *argv[])
         mesh->skeletonization();
         mesh->debug();
         std::cout << meshSize << " " <<mesh->allFacesInATL() << std::endl;
-        mesh->segmentation(initial, step);
+        // mesh->segmentation(initial, step);
         mesh->exportOBJ(out_filename);
 
         delete mesh;

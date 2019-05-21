@@ -1,41 +1,43 @@
-#include "plane.hpp"
-#include <iostream>
+// Code utilisé pour la première version de la segmentation (non terminée)
 
-Plane::Plane(glm::vec3 v1, glm::vec3 v2, glm::vec3 n, float step) {
-	m_point = v1;
-	m_lastPoint = v2;
-	m_vecteurNormale = n*step;
-}
+// #include "plane.hpp"
+// #include <iostream>
 
-glm::vec3 Plane::point() {
-	return m_point;
-}
+// Plane::Plane(glm::vec3 v1, glm::vec3 v2, glm::vec3 n, float step) {
+// 	m_point = v1;
+// 	m_lastPoint = v2;
+// 	m_vecteurNormale = n*step;
+// }
 
-glm::vec3 Plane::vecNorm(){
-	return m_vecteurNormale;
-}
+// glm::vec3 Plane::point() {
+// 	return m_point;
+// }
 
-void Plane::point(glm::vec3 p){
-	m_point = p;
-}
+// glm::vec3 Plane::vecNorm(){
+// 	return m_vecteurNormale;
+// }
 
-void Plane::vecNorm(glm::vec3 v){
-	m_vecteurNormale = v;
-}
+// void Plane::point(glm::vec3 p){
+// 	m_point = p;
+// }
 
-bool Plane::nextPoint(){
-	m_point += m_vecteurNormale;
+// void Plane::vecNorm(glm::vec3 v){
+// 	m_vecteurNormale = v;
+// }
 
-	// while last point is below the plane, return true
-	return (relativePosition(m_lastPoint) < 0 );
-}
+// bool Plane::nextPoint(){
+// 	m_point += m_vecteurNormale;
 
-int Plane::relativePosition(glm::vec3 v){
-	float dotProduct = glm::dot(m_point-v, m_vecteurNormale);
-	if(dotProduct < -0.001)
-		return -1;
-	else if(dotProduct > 0.001)
-		return 1;
-	else
-		return 0;
-}
+// 	// while last point is below the plane, return true
+// 	return (relativePosition(m_lastPoint) < 0 );
+// }
+
+// int Plane::relativePosition(glm::vec3 v){
+// 	float dotProduct = glm::dot(m_point-v, m_vecteurNormale);
+// 	if(dotProduct < -0.001)
+// 		return -1;
+// 	else if(dotProduct > 0.001)
+// 		return 1;
+// 	else
+// 		return 0;
+// }

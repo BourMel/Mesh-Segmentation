@@ -21,16 +21,14 @@ public:
     int exportOBJ(std::string filename);
     void exportMesh(std::string filename, std::vector<Mesh *> meshes);
 
-    static void resetId();
-
     void skeletonization();
-    void segmentation(Mesh* initial, float step);
+    void segmentation();
     void dissolveEdge(Edge *e);
 
     void addFace(Face *face);
+    void addVertex(Vertex *v);
     void removeEdge(Edge *e);
     void removeVertex(Vertex *v);
-
 
     // getter
     const std::vector<Edge *> &edges() { return m_edges; }
@@ -71,8 +69,6 @@ private:
 
     std::vector<SimpleVertex> m_raw_vertices;
     std::vector<Face*> m_faces;
-
-    std::vector<Edge*> m_bones;
 };
 
 #endif // MESH_HPP

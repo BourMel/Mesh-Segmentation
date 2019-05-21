@@ -1,29 +1,31 @@
-#ifndef PLANE_H
-#define PLANE_H
+// Code utilisé pour la première version de la segmentation (non terminée)
 
-#include <glm/vec3.hpp>
-#include <glm/glm.hpp>
+// #ifndef PLANE_H
+// #define PLANE_H
 
-class Plane
-{
-	public:
-		Plane(glm::vec3 v1, glm::vec3 v2, glm::vec3 n, float step);
+// #include <glm/vec3.hpp>
+// #include <glm/glm.hpp>
 
-		glm::vec3 point();
-		glm::vec3 vecNorm();
+// class Plane
+// {
+// 	public:
+// 		Plane(glm::vec3 v1, glm::vec3 v2, glm::vec3 n, float step);
 
-		void point(glm::vec3 p);
-		void vecNorm(glm::vec3 v);
+// 		glm::vec3 point();
+// 		glm::vec3 vecNorm();
 
-		/**
-		 * @brief Move the plane following a bone ; returns false if it reaches its end 
-		 */
-		bool nextPoint();
-		int relativePosition(glm::vec3 v);
-	private:
-		glm::vec3 m_point;
-		glm::vec3 m_vecteurNormale;
-		glm::vec3 m_lastPoint;
-};
+// 		void point(glm::vec3 p);
+// 		void vecNorm(glm::vec3 v);
 
-#endif
+// 		/**
+// 		 * @brief Move the plane following a bone ; returns false if it reaches its end 
+// 		 */
+// 		bool nextPoint();
+// 		int relativePosition(glm::vec3 v);
+// 	private:
+// 		glm::vec3 m_point;
+// 		glm::vec3 m_vecteurNormale;
+// 		glm::vec3 m_lastPoint;
+// };
+
+// #endif

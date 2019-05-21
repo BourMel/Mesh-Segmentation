@@ -17,8 +17,6 @@ public:
     void addEdge(Edge *e);
     void removeEdge(Edge *e);
 
-    static void resetId();
-
     // setter
     void position(const glm::vec3 &v);
     void locked(bool b);

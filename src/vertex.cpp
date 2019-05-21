@@ -36,10 +36,6 @@ void Vertex::removeEdge(Edge *e)
     erase(m_edges, e);
 }
 
-void Vertex::resetId() {
-    m_gid = 0;
-}
-
 void Vertex::position(const glm::vec3 &v)
 {
     m_pos = v;

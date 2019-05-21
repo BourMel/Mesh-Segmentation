@@ -74,14 +74,6 @@ void Edge::addFaceATL(std::size_t id)
     m_ATL.push_back(id);
 }
 
-void Edge::resetId() {
-    m_gid = 0;
-}
-
-glm::vec3 Edge::getNormal() {
-    return glm::normalize(m_v2->position() - m_v1->position());
-}
-
 void Edge::v1(Vertex *v1)
 {
     if(m_v2 == nullptr) {
@@ -138,10 +130,6 @@ void Edge::type(Edge::EdgeType type)
     m_type = type;
 }
 
-void Edge::area(float area) {
-    m_area = area;
-}
-
 Vertex *Edge::v1() const { return m_v1; }
 Vertex *Edge::v2() const { return m_v2; }
 std::vector<ID> &Edge::faces() { return  m_faces; }
@@ -152,7 +140,6 @@ ID Edge::id() const { return m_id; }
 
 bool Edge::compEdgeId(Edge *a, Edge *b) {return a->id() < b->id();}
 bool Edge::compEdgeCost(Edge *a, Edge *b) {return a->m_cost < b->m_cost;}
-bool Edge::compEdgeArea(Edge *a, Edge *b) {return a->m_area < b->m_area;}
 
 void Edge::computeCost()
 {

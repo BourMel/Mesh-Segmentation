@@ -403,6 +403,10 @@ void Mesh::addFace(Face* f) {
     m_faces.push_back(f);
 }
 
+void Mesh::addVertex(Vertex* v) {
+    m_vertices.push_back(v);
+}
+
 
 void Mesh::removeEdge(Edge *e)
 {
@@ -412,12 +416,6 @@ void Mesh::removeEdge(Edge *e)
 void Mesh::removeVertex(Vertex *v)
 {
     erase(m_vertices, v);
-}
-
-void Mesh::resetId() {
-    Vertex::resetId();
-    Edge::resetId();
-    Face::resetId();
 }
 
 void Mesh::debug()

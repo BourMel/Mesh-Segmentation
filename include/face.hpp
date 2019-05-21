@@ -15,8 +15,6 @@ class Face
 public:
     Face(ID a, ID b, ID c, float area);
 
-    static void resetId();
-
     ID A() const;
     ID B() const;
     ID C() const;
