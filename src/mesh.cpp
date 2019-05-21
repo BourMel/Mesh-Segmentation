@@ -337,6 +337,65 @@ int Mesh::exportOBJ(std::string filename)
     return 1;
 }
 
+
+void Mesh::exportMesh(std::string filename, std::vector<Mesh *> meshes) {
+    std::ofstream file;
+    glm::vec3 A = glm::vec3();
+    glm::vec3 B = glm::vec3();
+    glm::vec3 C = glm::vec3();
+    std::vector<Face*> faces;
+    std::vector<Edge*> edges;
+
+    file.open(filename);
+    if (!file.is_open())
+    {
+        std::cerr << "Unable to open file: " << filename << std::endl;
+        return;
+    }
+
+    for (unsigned int i=0; i < meshes.size(); i++)
+    {
+
+        file << "newmtl color" << i << std::endl;
+        file << "Kd " << static_cast <float> (rand()) / static_cast <float> (RAND_MAX) ;
+        file << " " << static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+        file << " " << static_cast <float> (rand()) / static_cast <float> (RAND_MAX) << std::endl;
+
+        file << "g group" << i << std::endl;
+        file << "    color" << i << std::endl;
+
+        std::cout << meshes.at(i)->faces().size() << std::endl;
+
+        for(unsigned int j=0; j < meshes.at(i)->faces().size(); j++)
+        {
+            //add vertices to the file
+            A = m_raw_vertices.at( meshes.at(i)->faces().at(j)->A() );
+            B = m_raw_vertices.at( meshes.at(i)->faces().at(j)->B() );
+            C = m_raw_vertices.at( meshes.at(i)->faces().at(j)->C() );
+
+            file << "v " << A.x << " " << A.y << " " << A.z << std::endl;
+            file << "v " << B.x << " " << B.y << " " << B.z << std::endl;
+            file << "v " << C.x << " " << C.y << " " << C.z << std::endl;
+        }
+
+        for(unsigned int j=0; j < meshes.at(i)->faces().size(); j++) {
+            file << "f "
+                << meshes.at(i)->faces().at(j)->A() << " "
+                << meshes.at(i)->faces().at(j)->B() << " "
+                << meshes.at(i)->faces().at(j)->C() << std::endl;
+        }
+
+        file << std::endl;
+    }
+    file.close();
+}
+
+
+void Mesh::addFace(Face* f) {
+    m_faces.push_back(f);
+}
+
+
 void Mesh::removeEdge(Edge *e)
 {
     erase(m_edges, e);

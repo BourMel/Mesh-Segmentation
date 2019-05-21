@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-void Mesh::segmentation(Mesh* initial, float step = 1.0f)
+void Mesh::segmentation(Mesh* initial, float step = 3.0f)
 {
 	m_bones = m_edges;
 	m_edges = initial->edges();
@@ -53,5 +53,47 @@ void Mesh::segmentation(Mesh* initial, float step = 1.0f)
     	m_bones.at(i)->area(currentArea);
   	}
 
+  	// order bones
+ 	std::sort(m_bones.begin(), m_bones.end(), Edge::compEdgeArea);
 
+ 	for(unsigned int i=0; i<m_bones.size(); i++) {
+ 		countIterations = 0;
+
+ 		// get the point V1 and the vector (V1,V2)
+    	sweepPlane = new Plane(
+    		m_bones.at(i)->v1()->position(),
+    		m_bones.at(i)->v2()->position(),
+    		m_bones.at(i)->getNormal(),
+    		step
+    	);
+
+    	while(sweepPlane->nextPoint()) {
+    		countIterations++;
+    		intersectionWithPlane = new Mesh();
+
+    		// get faces that intersect the plane
+    		for(auto face : m_faces) {
+    			glm::vec3 A = m_raw_vertices.at( face->A() );
+    			glm::vec3 B = m_raw_vertices.at( face->B() );
+    			glm::vec3 C = m_raw_vertices.at( face->C() );
+
+    			int positionA = sweepPlane->relativePosition(A);
+    			int positionB = sweepPlane->relativePosition(B);
+    			int positionC = sweepPlane->relativePosition(C);
+
+    			// if one edge intersects the plane, the face is part of the intersection
+    			if((positionA < 0 && positionB > 0) || (positionA > 0 && positionB < 0)) {
+			     	intersectionWithPlane->addFace(face);
+			  	} else if((positionB < 0 && positionC > 0) || (positionB > 0 && positionC < 0)) {
+			     	intersectionWithPlane->addFace(face);
+			  	} else if((positionC < 0 && positionA > 0) || (positionC > 0 && positionA < 0)) {
+			     	intersectionWithPlane->addFace(face);
+			  	}
+			}
+
+    		components.push_back(intersectionWithPlane);
+    	}
+ 	}
+
+ 	exportMesh("hello.obj", components);
 }

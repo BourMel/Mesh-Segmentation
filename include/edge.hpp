@@ -29,6 +29,7 @@ public:
     void addFaceATL(std::size_t id);
 
     static void resetId();
+    glm::vec3 getNormal();
 
     void v1(Vertex *v1);
     void v2(Vertex *v2);
@@ -45,7 +46,7 @@ public:
 
     static bool compEdgeId(Edge *a, Edge *b);
     static bool compEdgeCost(Edge *a, Edge *b);
-    //static bool compEdgeArea(Edge *a, Edge *b);
+    static bool compEdgeArea(Edge *a, Edge *b);
 
     friend std::ostream& operator<<(std::ostream &o, Edge &e);
 

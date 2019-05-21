@@ -1,7 +1,9 @@
-#include "utils.hpp"
 #include <glm/glm.hpp>
+#include "utils.hpp"
 #include "edge.hpp"
 #include "vertex.hpp"
+#include "face.hpp"
+#include "mesh.hpp"
 
 bool faceInCommon(Edge *e1, Edge *e2, ID *id)
 {

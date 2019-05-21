@@ -9,6 +9,7 @@
 
 class Edge;
 class Vertex;
+class Mesh;
 
 using ID = std::size_t;
 

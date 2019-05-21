@@ -19,6 +19,7 @@ public:
     int importOBJ(std::string filename);
     int importOFF(std::string filename);
     int exportOBJ(std::string filename);
+    void exportMesh(std::string filename, std::vector<Mesh *> meshes);
 
     static void resetId();
 
@@ -26,6 +27,7 @@ public:
     void segmentation(Mesh* initial, float step);
     void dissolveEdge(Edge *e);
 
+    void addFace(Face *face);
     void removeEdge(Edge *e);
     void removeVertex(Vertex *v);
 
