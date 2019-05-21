@@ -12,6 +12,10 @@ Face::Face(ID a, ID b, ID c, float area)
     m_id = m_gid++;
 }
 
+void Face::resetId() {
+	m_gid = 0;
+}
+
 ID Face::A() const{ return m_A; }
 ID Face::B() const{ return m_B; }
 ID Face::C() const{ return m_C; }

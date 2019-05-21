@@ -20,11 +20,17 @@ public:
     int importOFF(std::string filename);
     int exportOBJ(std::string filename);
 
+    static void resetId();
+
     void skeletonization();
+    void segmentation(Mesh* initial, float step);
     void dissolveEdge(Edge *e);
 
     void removeEdge(Edge *e);
     void removeVertex(Vertex *v);
+
+    // getter
+    const std::vector<Edge *> &edges() { return m_edges; }
 
     void debug();
 
@@ -54,6 +60,8 @@ private:
 
     std::vector<glm::vec3> m_raw_vertices;
     std::vector<Face*> m_faces;
+
+    std::vector<Edge*> m_bones;
 };
 
 #endif // MESH_HPP

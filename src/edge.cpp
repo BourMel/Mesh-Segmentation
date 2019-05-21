@@ -74,6 +74,10 @@ void Edge::addFaceATL(std::size_t id)
     m_ATL.push_back(id);
 }
 
+void Edge::resetId() {
+    m_gid = 0;
+}
+
 void Edge::v1(Vertex *v1)
 {
     if(m_v2 == nullptr) {
@@ -128,6 +132,10 @@ void Edge::v2(Vertex *v2)
 void Edge::type(Edge::EdgeType type)
 {
     m_type = type;
+}
+
+void Edge::area(float area) {
+    m_area = area;
 }
 
 Vertex *Edge::v1() const { return m_v1; }

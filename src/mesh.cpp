@@ -346,6 +346,12 @@ void Mesh::removeVertex(Vertex *v)
     erase(m_vertices, v);
 }
 
+void Mesh::resetId() {
+    Vertex::resetId();
+    Edge::resetId();
+    Face::resetId();
+}
+
 void Mesh::debug()
 {
     std::cout << "Vertices (" << m_vertices.size() << ")" << std::endl;

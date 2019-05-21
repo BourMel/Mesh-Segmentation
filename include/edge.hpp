@@ -28,9 +28,12 @@ public:
     void removeFace(ID f);
     void addFaceATL(std::size_t id);
 
+    static void resetId();
+
     void v1(Vertex *v1);
     void v2(Vertex *v2);
     void type(EdgeType type);
+    void area(float area);
 
     Vertex *v1() const;
     Vertex *v2() const;
@@ -56,6 +59,7 @@ private:
     std::vector<ID> m_ATL;
     EdgeType m_type;
     float m_cost;
+    float m_area;
 
     static ID m_gid;
 };
