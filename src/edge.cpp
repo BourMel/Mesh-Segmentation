@@ -71,7 +71,11 @@ void Edge::removeFace(ID f)
 
 void Edge::addFaceATL(std::size_t id)
 {
-    m_ATL.push_back(id);
+    auto it = find(m_ATL,id);
+    if(it == m_ATL.end())
+    {
+        m_ATL.push_back(id);
+    }
 }
 
 void Edge::v1(Vertex *v1)

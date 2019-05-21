@@ -71,7 +71,7 @@ void Mesh::skeletonization()
             stop = true;
         }
 
-        std::cout << "\r" << static_cast<float>(m_vertices.size())<<std::flush;
+        //std::cout << "\r" << static_cast<float>(m_vertices.size())<<std::flush;
         //std::cout << m_vertices.size() << std::endl;
         //debug();
     }
@@ -100,11 +100,11 @@ void Mesh::dissolveEdge(Edge *edge)
             }
             mean->addEdge(e);
         }
-        else // BONE or VIRTUAL
+        else if(e->type() == Edge::BONE && e != edge)
         {
             // on créer une virtual entre mean et le vertex connecté
 
-            Edge *virtualEdge = new Edge;
+            Edge *virtualEdge = new Edge();
             virtualEdge->type(Edge::VIRTUAL);
             if(e->v1() == edge->v1() || e->v1() == edge->v2())
             {
@@ -116,9 +116,12 @@ void Mesh::dissolveEdge(Edge *edge)
             }
             virtualEdge->v2(mean);
             virtualEdge->v1()->locked(true);
-            virtualEdge->v2()->locked(true);
+            //virtualEdge->v2()->locked(true);
             m_edges.push_back(virtualEdge);
             mean->addEdge(virtualEdge); // THIS IS NEW
+        } else {
+            e->v2(mean);
+            mean->addEdge(e);
         }
     }
 
@@ -186,11 +189,11 @@ void Mesh::dissolveEdge(Edge *edge)
         }
     }
 
-    /*std::cout << "mean" << mean->id() << " has:" <<std::endl;
-    for(auto e: mean->edges())
-    {
-        std::cout << *e << std::endl;
-    }*/
+    //std::cout << "mean" << mean->id() << " has:" <<std::endl;
+    //for(auto e: mean->edges())
+    //{
+        //std::cout << *e << std::endl;
+    //}
 
 
     // final cleaning
@@ -229,6 +232,14 @@ void Mesh::dissolveEdge(Edge *edge)
             else
             {
                 std::cout << "#### no face in common ####" << std::endl;
+                /*std::cout << "got same edges: " << *e1 << " " << *e2 << std::endl;
+                std::cout << "concat : " << *edge << std::endl;
+                std::cout << "mean" << mean->id() << " has:" <<std::endl;
+                for(auto e: mean->edges())
+                {
+                    std::cout << *e << std::endl;
+                }
+                //std::cout << "#### no face in common ####" << std::endl;*/
             }
 
             // on met la liste des ATL de e2 dans e1
@@ -253,10 +264,10 @@ void Mesh::dissolveEdge(Edge *edge)
             }
 
             // si e2 est adjacent à une autre face
-            if(e2->faces().size()==1)
+            for(unsigned int j = 0; j < e2->faces().size(); ++j)
             {
                 // on la met dans e1
-                ID tf = e2->faces().at(0);
+                ID tf = e2->faces().at(j);
                 e1->addFace(tf);
             }
 
@@ -286,6 +297,6 @@ void Mesh::dissolveEdge(Edge *edge)
     for(auto e : map)
     {
         mean->edges().push_back(e.second);
-        //std::cout << *(e.second) << std::endl;
+    //    std::cout << *(e.second) << std::endl;
     }
 }
