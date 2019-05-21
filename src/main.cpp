@@ -45,7 +45,6 @@ int main(int argc, char *argv[])
         mesh = new Mesh(in_filename);
         Mesh::resetId();
         initial = new Mesh(in_filename);
-
     } catch (const char* e) {
         std::cerr << e << std::endl;
         if(mesh != nullptr)
@@ -54,8 +53,10 @@ int main(int argc, char *argv[])
     }
     if(mesh)
     {
+        int meshSize = mesh->faces().size();
         mesh->skeletonization();
         mesh->debug();
+        std::cout << meshSize << " " <<mesh->allFacesInATL() << std::endl;
         mesh->segmentation(initial, step);
         mesh->exportOBJ(out_filename);
 

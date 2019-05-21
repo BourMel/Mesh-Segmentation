@@ -28,7 +28,7 @@ void Mesh::skeletonization()
                     {
                         //debug();
                         dissolveEdge(e);
-                        std::cout << std::endl;
+                        //std::cout << std::endl;
                         if(e->v1()->locked() == false)
                         {
                             removeVertex(e->v1());
@@ -75,7 +75,7 @@ void Mesh::skeletonization()
         //std::cout << m_vertices.size() << std::endl;
         //debug();
     }
-    std::cout << std::endl;
+    //std::cout << std::endl;
 }
 
 void Mesh::dissolveEdge(Edge *edge)
