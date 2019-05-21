@@ -73,9 +73,9 @@ void Mesh::segmentation(Mesh* initial, float step = 3.0f)
 
     		// get faces that intersect the plane
     		for(auto face : m_faces) {
-    			glm::vec3 A = m_raw_vertices.at( face->A() );
-    			glm::vec3 B = m_raw_vertices.at( face->B() );
-    			glm::vec3 C = m_raw_vertices.at( face->C() );
+                glm::vec3 A = m_raw_vertices.at( face->A() ).pos;
+                glm::vec3 B = m_raw_vertices.at( face->B() ).pos;
+                glm::vec3 C = m_raw_vertices.at( face->C() ).pos;
 
     			int positionA = sweepPlane->relativePosition(A);
     			int positionB = sweepPlane->relativePosition(B);

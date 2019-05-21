@@ -60,10 +60,16 @@ private:
         ID f_id;
     } FIC;
 
+    typedef struct
+    {
+        glm::vec3 pos;
+        ID id;
+    } SimpleVertex;
+
     std::vector<Edge*> m_edges;
     std::vector<Vertex*> m_vertices;
 
-    std::vector<glm::vec3> m_raw_vertices;
+    std::vector<SimpleVertex> m_raw_vertices;
     std::vector<Face*> m_faces;
 
     std::vector<Edge*> m_bones;

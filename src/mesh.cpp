@@ -79,7 +79,7 @@ int Mesh::importOBJ(std::string filename)
             if (iss >> x >> y >> z)
             {
                 m_vertices.push_back(new Vertex({x, y, z}));
-                m_raw_vertices.push_back({x,y,z});
+                m_raw_vertices.push_back({{x,y,z},0});
             }
             else
             {
@@ -219,7 +219,7 @@ int Mesh::importOFF(std::string filename)
         {
             // add the new vertex to the mesh
             m_vertices.push_back(new Vertex({x, y, z}));
-            m_raw_vertices.push_back({x,y,z});
+            m_raw_vertices.push_back({{x,y,z},0});
         }
         else
         {
@@ -340,11 +340,6 @@ int Mesh::exportOBJ(std::string filename)
 
 void Mesh::exportMesh(std::string filename, std::vector<Mesh *> meshes) {
     std::ofstream file;
-    glm::vec3 A = glm::vec3();
-    glm::vec3 B = glm::vec3();
-    glm::vec3 C = glm::vec3();
-    std::vector<Face*> faces;
-    std::vector<Edge*> edges;
 
     file.open(filename);
     if (!file.is_open())
@@ -353,39 +348,52 @@ void Mesh::exportMesh(std::string filename, std::vector<Mesh *> meshes) {
         return;
     }
 
-    for (unsigned int i=0; i < meshes.size(); i++)
+    int elem_num = 0;
+    ID i = 0;
+    for (auto mesh : meshes)
     {
 
-        file << "newmtl color" << i << std::endl;
+        /*file << "newmtl color" << i << std::endl;
         file << "Kd " << static_cast <float> (rand()) / static_cast <float> (RAND_MAX) ;
         file << " " << static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
         file << " " << static_cast <float> (rand()) / static_cast <float> (RAND_MAX) << std::endl;
 
         file << "g group" << i << std::endl;
         file << "    color" << i << std::endl;
-
-        std::cout << meshes.at(i)->faces().size() << std::endl;
-
-        for(unsigned int j=0; j < meshes.at(i)->faces().size(); j++)
+        */
+        file << "o element" << elem_num++ << std::endl;
+        std::map<ID,SimpleVertex> map;
+        for(auto face: mesh->faces())
         {
-            //add vertices to the file
-            A = m_raw_vertices.at( meshes.at(i)->faces().at(j)->A() );
-            B = m_raw_vertices.at( meshes.at(i)->faces().at(j)->B() );
-            C = m_raw_vertices.at( meshes.at(i)->faces().at(j)->C() );
-
-            file << "v " << A.x << " " << A.y << " " << A.z << std::endl;
-            file << "v " << B.x << " " << B.y << " " << B.z << std::endl;
-            file << "v " << C.x << " " << C.y << " " << C.z << std::endl;
+            auto it1 = map.find(face->A());
+            if(it1 == map.end()){
+                m_raw_vertices.at(face->A()).id = i++;
+                map.insert({face->A(),m_raw_vertices.at(face->A())});
+            }
+            auto it2 = map.find(face->B());
+            if(it2 == map.end()){
+                m_raw_vertices.at(face->B()).id = i++;
+                map.insert({face->B(),m_raw_vertices.at(face->B())});
+            }
+            auto it3 = map.find(face->C());
+            if(it3 == map.end()){
+                m_raw_vertices.at(face->C()).id = i++;
+                map.insert({face->C(),m_raw_vertices.at(face->C())});
+            }
         }
 
-        for(unsigned int j=0; j < meshes.at(i)->faces().size(); j++) {
+        for(auto it = map.begin() ; it != map.end() ; ++it)
+        {
+            file << "v " << (*it).second.pos.x << " " << (*it).second.pos.y << " " << (*it).second.pos.z << " " << std::endl;
+        }
+        file << "s off" << std::endl;
+
+        for(auto face: mesh->faces()) {
             file << "f "
-                << meshes.at(i)->faces().at(j)->A() << " "
-                << meshes.at(i)->faces().at(j)->B() << " "
-                << meshes.at(i)->faces().at(j)->C() << std::endl;
+                << map.at(face->A()).id << " "
+                << map.at(face->B()).id << " "
+                << map.at(face->C()).id << std::endl;
         }
-
-        file << std::endl;
     }
     file.close();
 }

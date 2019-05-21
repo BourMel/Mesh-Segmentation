@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
             verbose = true;
             break;
         default:
-            std::cerr << "Usage: " << argv[0] << "[-o oufile] [-s step] [-v] infile" << std::endl;
+            std::cerr << "Usage: " << argv[0] << "[-o outfile] [-s step] [-v] infile" << std::endl;
             exit(EXIT_FAILURE);
         }
     }
@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     if(optind >= argc)
     {
         std::cerr << "Expected arguments after options" << std::endl;
-        std::cerr << "Usage: " << argv[0] << "[-o oufile] [-s step] [-v] infile" << std::endl;
+        std::cerr << "Usage: " << argv[0] << "[-o outfile] [-s step] [-v] infile" << std::endl;
         exit(EXIT_FAILURE);
     }
 
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
     }
     if(mesh)
     {
-        int meshSize = mesh->faces().size();
+        std::size_t meshSize = mesh->faces().size();
         mesh->skeletonization();
         mesh->debug();
         std::cout << meshSize << " " <<mesh->allFacesInATL() << std::endl;
