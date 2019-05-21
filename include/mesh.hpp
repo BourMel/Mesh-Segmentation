@@ -22,7 +22,7 @@ public:
     void exportMesh(std::string filename, std::vector<Mesh *> meshes);
 
     void skeletonization();
-    void segmentation();
+    void segmentation(std::string filename);
     void dissolveEdge(Edge *e);
 
     void addFace(Face *face);

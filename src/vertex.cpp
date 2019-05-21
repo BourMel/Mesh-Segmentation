@@ -51,6 +51,11 @@ void Vertex::exportId(ID id)
     m_exportId = id;
 }
 
+void Vertex::state(VertexState state) {
+    m_state = state;
+}
+
+Vertex::VertexState Vertex::state() const { return m_state; }
 const glm::vec3 &Vertex::position() const { return m_pos; }
 ID Vertex::id() const { return m_id; }
 std::vector<Edge *> &Vertex::edges() { return m_edges; }

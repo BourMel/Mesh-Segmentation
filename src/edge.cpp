@@ -28,6 +28,7 @@ void Edge::init()
 {
     m_id = m_gid++;
     m_type = MESH;
+    m_state = TO_VISIT;
 }
 
 std::vector<Edge *> Edge::getConnectedEdges()
@@ -134,11 +135,17 @@ void Edge::type(Edge::EdgeType type)
     m_type = type;
 }
 
+void Edge::state(Edge::EdgeState state)
+{
+    m_state = state;
+}
+
 Vertex *Edge::v1() const { return m_v1; }
 Vertex *Edge::v2() const { return m_v2; }
 std::vector<ID> &Edge::faces() { return  m_faces; }
 std::vector<ID> &Edge::ATL() { return  m_ATL; }
 Edge::EdgeType Edge::type() const { return m_type; }
+Edge::EdgeState Edge::state() const { return m_state; }
 float Edge::cost() const { return m_cost; }
 ID Edge::id() const { return m_id; }
 

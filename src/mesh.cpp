@@ -40,6 +40,77 @@ Mesh::Mesh(std::string filename)
     }
 }
 
+void Mesh::segmentation(std::string filename) {
+    std::vector<Mesh*> components;
+
+    for(unsigned int i=0; i<m_vertices.size(); i++) {
+
+        if((m_vertices.at(i)->state() != Vertex::SEEN) && (m_vertices.at(i)->edges().size() != 1)) {
+            continue;
+        }
+
+        Mesh* component = new Mesh();
+
+        Vertex* currentV = m_vertices.at(i);
+        Edge* currentE = currentV->edges().at(0);
+
+        currentV->state(Vertex::SEEN);
+        currentE->state(Edge::SEEN);
+
+        // add ATL to component
+        for(unsigned int j=0; j<currentE->ATL().size(); j++) {
+            component->addFace( m_faces.at( currentE->ATL().at(j) ) );
+        }
+
+
+        while(currentV->edges().size() <= 2) {
+
+            // get next vertex
+            if(currentE->v1()->id() == currentV->id()) {
+                currentV = currentE->v2();
+            } else {
+                currentV = currentE->v1();
+            }
+
+            // no need to go further if it has already been seen
+            if((currentV->edges().size() == 1) || (currentV->state() == Vertex::SEEN)) {
+                currentV->state(Vertex::SEEN);
+                break;
+            }
+
+            // else, continue to expand the component
+            for(unsigned int j=0; j<currentV->edges().size(); j++) {
+                if(currentV->edges().at(j)->state() == Edge::TO_VISIT) {
+                    currentE = currentV->edges().at(j);
+                }
+            }
+
+            currentV->state(Vertex::SEEN);
+            currentE->state(Edge::SEEN);
+
+            // add ATL to component
+            for(unsigned int j=0; j<currentE->ATL().size(); j++) {
+                component->addFace( m_faces.at( currentE->ATL().at(j) ) );
+            }   
+        }  
+
+        std::cout << "over !" << std::endl;
+        components.push_back(component);
+    }
+
+    // Mesh* component = new Mesh();
+
+    // for(unsigned int i=0; i<m_edges.size(); i++) {
+    //     for(unsigned int j=0; j<m_edges.at(i)->ATL().size(); j++) {
+    //         component->addFace(m_faces.at( m_edges.at(i)->ATL().at(j) ));
+    //     }        
+    // }
+
+    // components.push_back(component);
+
+    exportMesh(filename, components);
+}
+
 int Mesh::importOBJ(std::string filename)
 {
     std::map<std::pair<int, int>, Edge *> edge_map;
@@ -390,9 +461,9 @@ void Mesh::exportMesh(std::string filename, std::vector<Mesh *> meshes) {
 
         for(auto face: mesh->faces()) {
             file << "f "
-                << map.at(face->A()).id << " "
-                << map.at(face->B()).id << " "
-                << map.at(face->C()).id << std::endl;
+                << map.at(face->A()).id+1 << " "
+                << map.at(face->B()).id+1 << " "
+                << map.at(face->C()).id+1 << std::endl;
         }
     }
     file.close();

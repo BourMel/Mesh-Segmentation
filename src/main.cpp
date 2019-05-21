@@ -56,8 +56,8 @@ int main(int argc, char *argv[])
         mesh->skeletonization();
         mesh->debug();
         std::cout << meshSize << " " <<mesh->allFacesInATL() << std::endl;
-        // mesh->segmentation(initial, step);
-        mesh->exportOBJ(out_filename);
+        mesh->segmentation(out_filename);
+        // mesh->exportOBJ(out_filename);
 
         delete mesh;
     }
