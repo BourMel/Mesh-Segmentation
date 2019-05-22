@@ -19,7 +19,8 @@ public:
     int importOBJ(std::string filename);
     int importOFF(std::string filename);
     int exportOBJ(std::string filename);
-    void exportMesh(std::string filename, std::vector<Mesh *> meshes);
+    void exportMesh(std::string filename);
+    int simpleExport(std::string filename);
 
     void skeletonization();
     void segmentation(std::string filename);
@@ -69,6 +70,8 @@ private:
 
     std::vector<SimpleVertex> m_raw_vertices;
     std::vector<Face*> m_faces;
+
+    std::vector<std::vector<Face*>> m_components;
 };
 
 #endif // MESH_HPP

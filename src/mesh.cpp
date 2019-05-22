@@ -41,7 +41,6 @@ Mesh::Mesh(std::string filename)
 }
 
 void Mesh::segmentation(std::string filename) {
-    std::vector<Mesh*> components;
 
     for(unsigned int i=0; i<m_vertices.size(); i++) {
 
@@ -49,7 +48,7 @@ void Mesh::segmentation(std::string filename) {
             continue;
         }
 
-        Mesh* component = new Mesh();
+        std::vector<Face*> component;
 
         Vertex* currentV = m_vertices.at(i);
         Edge* currentE = currentV->edges().at(0);
@@ -59,7 +58,8 @@ void Mesh::segmentation(std::string filename) {
 
         // add ATL to component
         for(unsigned int j=0; j<currentE->ATL().size(); j++) {
-            component->addFace( m_faces.at( currentE->ATL().at(j) ) );
+            if(currentE->ATL().at(j) < m_faces.size())
+                component.push_back( m_faces.at( currentE->ATL().at(j) ) );
         }
 
 
@@ -90,25 +90,27 @@ void Mesh::segmentation(std::string filename) {
 
             // add ATL to component
             for(unsigned int j=0; j<currentE->ATL().size(); j++) {
-                component->addFace( m_faces.at( currentE->ATL().at(j) ) );
+                if(currentE->ATL().at(j) < m_faces.size())
+                    component.push_back( m_faces.at( currentE->ATL().at(j) ) );
             }   
         }  
 
         std::cout << "over !" << std::endl;
-        components.push_back(component);
+        m_components.push_back(component);
     }
 
-    // Mesh* component = new Mesh();
+    /*std::vector<Face*> component;
 
-    // for(unsigned int i=0; i<m_edges.size(); i++) {
-    //     for(unsigned int j=0; j<m_edges.at(i)->ATL().size(); j++) {
-    //         component->addFace(m_faces.at( m_edges.at(i)->ATL().at(j) ));
-    //     }        
-    // }
+    for(auto edge: m_edges) {
+        for(auto face: edge->ATL()) {
+            std::cout << *(m_faces.at(face)) << std::endl;
+            component.push_back(m_faces.at(face));
+        }
+    }
 
-    // components.push_back(component);
+    m_components.push_back(component);*/
 
-    exportMesh(filename, components);
+    exportMesh(filename);
 }
 
 int Mesh::importOBJ(std::string filename)
@@ -377,6 +379,33 @@ int Mesh::importOFF(std::string filename)
     return 1;
 }
 
+int Mesh::simpleExport(std::string filename)
+{
+    std::ofstream file;   // output file
+
+    //open file
+    file.open(filename);
+    if (!file.is_open())
+    {
+        std::cerr << "Unable to open file: " << filename << std::endl;
+        return 0;
+    }
+
+    file << "o element" << std::endl;
+    for(auto v: m_raw_vertices)
+    {
+        file << "v " << v.pos.x << " " << v.pos.y << " " << v.pos.z << std::endl;
+    }
+    file << "s off" << std::endl;
+    for(auto f: m_faces)
+    {
+        file << "f " << f->A()+1 << " " << f->B()+1 << " " << f->C()+1 << std::endl;
+    }
+
+    file.close();
+    return 1;
+}
+
 int Mesh::exportOBJ(std::string filename)
 {
     std::ofstream file;   // output file
@@ -409,7 +438,7 @@ int Mesh::exportOBJ(std::string filename)
 }
 
 
-void Mesh::exportMesh(std::string filename, std::vector<Mesh *> meshes) {
+void Mesh::exportMesh(std::string filename) {
     std::ofstream file;
 
     file.open(filename);
@@ -420,50 +449,52 @@ void Mesh::exportMesh(std::string filename, std::vector<Mesh *> meshes) {
     }
 
     int elem_num = 0;
-    ID i = 0;
-    for (auto mesh : meshes)
+    ID i = 1;
+    for (auto mesh : m_components)
     {
-
-        /*file << "newmtl color" << i << std::endl;
-        file << "Kd " << static_cast <float> (rand()) / static_cast <float> (RAND_MAX) ;
-        file << " " << static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-        file << " " << static_cast <float> (rand()) / static_cast <float> (RAND_MAX) << std::endl;
-
-        file << "g group" << i << std::endl;
-        file << "    color" << i << std::endl;
-        */
         file << "o element" << elem_num++ << std::endl;
         std::map<ID,SimpleVertex> map;
-        for(auto face: mesh->faces())
+        std::vector<ID> indices_sorted;
+        for(auto face: mesh)
         {
             auto it1 = map.find(face->A());
-            if(it1 == map.end()){
-                m_raw_vertices.at(face->A()).id = i++;
+            if(it1 == map.end())
+            {
+                m_raw_vertices.at(face->A()).id = i;
                 map.insert({face->A(),m_raw_vertices.at(face->A())});
+                indices_sorted.push_back(face->A());
+                i++;
             }
             auto it2 = map.find(face->B());
-            if(it2 == map.end()){
-                m_raw_vertices.at(face->B()).id = i++;
+            if(it2 == map.end())
+            {
+                m_raw_vertices.at(face->B()).id = i;
                 map.insert({face->B(),m_raw_vertices.at(face->B())});
+                indices_sorted.push_back(face->B());
+                i++;
             }
             auto it3 = map.find(face->C());
-            if(it3 == map.end()){
-                m_raw_vertices.at(face->C()).id = i++;
+            if(it3 == map.end())
+            {
+                m_raw_vertices.at(face->C()).id = i;
                 map.insert({face->C(),m_raw_vertices.at(face->C())});
+                indices_sorted.push_back(face->C());
+                i++;
             }
         }
 
-        for(auto it = map.begin() ; it != map.end() ; ++it)
+        for(auto id : indices_sorted)
         {
-            file << "v " << (*it).second.pos.x << " " << (*it).second.pos.y << " " << (*it).second.pos.z << " " << std::endl;
+            auto v = m_raw_vertices.at(id);
+            file << "v " << v.pos.x << " " << v.pos.y << " " << v.pos.z << " " << std::endl;
         }
         file << "s off" << std::endl;
 
-        for(auto face: mesh->faces()) {
+        for(auto face: mesh) {
             file << "f "
-                << map.at(face->A()).id+1 << " "
-                << map.at(face->B()).id+1 << " "
-                << map.at(face->C()).id+1 << std::endl;
+                << m_raw_vertices.at(face->A()).id << " "
+                << m_raw_vertices.at(face->B()).id << " "
+                << m_raw_vertices.at(face->C()).id << std::endl;
         }
     }
     file.close();

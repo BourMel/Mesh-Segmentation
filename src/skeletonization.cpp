@@ -71,7 +71,7 @@ void Mesh::skeletonization()
             stop = true;
         }
 
-        //std::cout << "\r" << static_cast<float>(m_vertices.size())<<std::flush;
+        std::cout << "\r" << static_cast<float>(m_vertices.size())<<std::flush;
         //std::cout << m_vertices.size() << std::endl;
         //debug();
     }

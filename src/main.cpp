@@ -52,13 +52,11 @@ int main(int argc, char *argv[])
     }
     if(mesh)
     {
-        std::size_t meshSize = mesh->faces().size();
         mesh->skeletonization();
         mesh->debug();
-        std::cout << meshSize << " " <<mesh->allFacesInATL() << std::endl;
+        mesh->exportOBJ("skel_"+out_filename);
         mesh->segmentation(out_filename);
-        // mesh->exportOBJ(out_filename);
-
+        //mesh->simpleExport(out_filename);
         delete mesh;
     }
     else
